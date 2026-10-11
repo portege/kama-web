@@ -1,0 +1,833 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="color-scheme" content="dark" />
+
+  <title>Pricing — Babeh.com</title>
+  <meta name="description" content="Simple, transparent pricing for BABEH — the AI-powered knowledge base platform." />
+
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>💬</text></svg>" />
+  <link rel="stylesheet" href="css/style.css" />
+  <style>
+    .pricing-page {
+      position: relative;
+      z-index: 1;
+      flex: 1;
+      overflow-y: auto;
+      padding: 2.5rem 1.5rem 4rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .pricing-inner {
+      width: 100%;
+      max-width: 900px;
+    }
+
+    /* Hero */
+    .pricing-hero {
+      text-align: center;
+      margin-bottom: 2.5rem;
+    }
+
+    .pricing-hero h1 {
+      font-size: 1.75rem;
+      font-weight: 700;
+      color: var(--text-high);
+      margin-bottom: 0.5rem;
+    }
+
+    .pricing-hero p {
+      font-size: 0.9375rem;
+      color: var(--text-medium);
+    }
+
+    /* Billing toggle */
+    .billing-toggle {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.875rem;
+      margin-bottom: 2.5rem;
+    }
+
+    .billing-toggle span {
+      font-size: 0.875rem;
+      color: var(--text-low);
+      transition: color var(--transition);
+    }
+
+    .billing-toggle span.active {
+      color: var(--text-high);
+      font-weight: 500;
+    }
+
+    .billing-badge {
+      font-size: 0.6875rem;
+      font-weight: 600;
+      background: var(--accent-dim);
+      color: var(--accent);
+      border: 1px solid rgba(187, 134, 252, 0.25);
+      border-radius: 20px;
+      padding: 0.125rem 0.5rem;
+      white-space: nowrap;
+    }
+
+    /* Toggle switch */
+    .toggle-switch {
+      position: relative;
+      width: 44px;
+      height: 24px;
+      flex-shrink: 0;
+    }
+
+    .toggle-switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+
+    .toggle-track {
+      position: absolute;
+      inset: 0;
+      border-radius: 24px;
+      background: var(--bg-surface-high);
+      border: 1px solid var(--border-subtle);
+      cursor: pointer;
+      transition: background var(--transition);
+    }
+
+    .toggle-track::after {
+      content: '';
+      position: absolute;
+      top: 3px;
+      left: 3px;
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      background: var(--text-low);
+      transition: transform var(--transition), background var(--transition);
+    }
+
+    .toggle-switch input:checked + .toggle-track {
+      background: var(--accent-dim);
+      border-color: rgba(187, 134, 252, 0.3);
+    }
+
+    .toggle-switch input:checked + .toggle-track::after {
+      transform: translateX(20px);
+      background: var(--accent);
+    }
+
+    /* Cards grid */
+    .pricing-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.25rem;
+      margin-bottom: 3rem;
+    }
+
+    .pricing-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-lg);
+      padding: 1.75rem 1.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+      transition: box-shadow var(--transition), border-color var(--transition);
+      position: relative;
+    }
+
+    .pricing-card:hover {
+      box-shadow: 0 8px 32px var(--shadow-dark);
+    }
+
+    .pricing-card.featured {
+      border-color: rgba(187, 134, 252, 0.35);
+      background: linear-gradient(160deg, rgba(187,134,252,0.07) 0%, var(--bg-surface) 60%);
+      box-shadow: 0 0 60px rgba(187, 134, 252, 0.1);
+    }
+
+    .pricing-card.featured:hover {
+      box-shadow: 0 8px 40px rgba(187, 134, 252, 0.18);
+    }
+
+    .featured-badge {
+      position: absolute;
+      top: -1px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--accent);
+      color: #0d0d0d;
+      font-size: 0.6875rem;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      padding: 0.2rem 0.875rem;
+      border-radius: 0 0 8px 8px;
+    }
+
+    .disabled-badge {
+      position: absolute;
+      top: -1px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--border-subtle);
+      color: var(--text-low);
+      font-size: 0.6875rem;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      padding: 0.2rem 0.875rem;
+      border-radius: 0 0 8px 8px;
+    }
+
+    .pricing-card.disabled {
+      filter: grayscale(0.65);
+      opacity: 0.6;
+    }
+
+    .pricing-card.disabled:hover {
+      box-shadow: none;
+    }
+
+    .plan-name {
+      font-size: 0.8125rem;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--text-low);
+      margin-bottom: 1rem;
+    }
+
+    .plan-price {
+      margin-bottom: 1.5rem;
+    }
+
+    .plan-price .amount {
+      font-size: 2.25rem;
+      font-weight: 700;
+      color: var(--text-high);
+      line-height: 1;
+    }
+
+    .plan-price .period {
+      font-size: 0.875rem;
+      color: var(--text-low);
+      margin-left: 0.25rem;
+    }
+
+    .plan-price .billed-note {
+      display: block;
+      font-size: 0.75rem;
+      color: var(--text-low);
+      margin-top: 0.3rem;
+    }
+
+    .plan-price .contact-sales {
+      font-size: 1.375rem;
+      font-weight: 700;
+      color: var(--text-high);
+      line-height: 1.3;
+    }
+
+    .plan-cta {
+      display: block;
+      width: 100%;
+      padding: 0.625rem 1rem;
+      border-radius: 10px;
+      border: 1px solid var(--border-subtle);
+      background: transparent;
+      color: var(--text-medium);
+      font-size: 0.875rem;
+      font-weight: 500;
+      font-family: inherit;
+      cursor: pointer;
+      text-align: center;
+      text-decoration: none;
+      transition: all var(--transition);
+      margin-bottom: 1.75rem;
+    }
+
+    .plan-cta:hover {
+      border-color: rgba(187, 134, 252, 0.4);
+      color: var(--accent);
+      background: var(--accent-dim);
+    }
+
+    .pricing-card.featured .plan-cta {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: #0d0d0d;
+      font-weight: 600;
+    }
+
+    .pricing-card.featured .plan-cta:hover {
+      opacity: 0.88;
+    }
+
+    .plan-cta-disabled,
+    .plan-cta-disabled:hover {
+      background: transparent;
+      border-color: var(--border-subtle);
+      color: var(--text-low);
+      cursor: not-allowed;
+      pointer-events: none;
+    }
+
+    /* Feature list */
+    .plan-features {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+      border-top: 1px solid var(--border-subtle);
+      padding-top: 1.5rem;
+    }
+
+    .plan-features li {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.625rem;
+      font-size: 0.8125rem;
+      color: var(--text-medium);
+      line-height: 1.5;
+    }
+
+    .plan-features li .feat-label {
+      color: var(--text-low);
+      font-size: 0.75rem;
+      display: block;
+    }
+
+    .feat-check {
+      color: var(--accent);
+      font-size: 0.875rem;
+      flex-shrink: 0;
+      margin-top: 0.05rem;
+    }
+
+    /* Comparison table */
+    .compare-section {
+      margin-top: 1rem;
+    }
+
+    .compare-section h2 {
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--text-medium);
+      margin-bottom: 1rem;
+      text-align: center;
+      letter-spacing: 0.02em;
+    }
+
+    .compare-table-wrap {
+      overflow-x: auto;
+      border-radius: var(--radius-md);
+      border: 1px solid var(--border-subtle);
+    }
+
+    .compare-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.8125rem;
+    }
+
+    .compare-table th {
+      padding: 0.875rem 1.25rem;
+      text-align: left;
+      color: var(--text-low);
+      font-weight: 500;
+      background: var(--bg-surface);
+      border-bottom: 1px solid var(--border-subtle);
+      white-space: nowrap;
+    }
+
+    .compare-table th:not(:first-child) {
+      text-align: center;
+    }
+
+    .compare-table th.col-featured {
+      color: var(--accent);
+    }
+
+    .compare-table td {
+      padding: 0.75rem 1.25rem;
+      color: var(--text-medium);
+      border-bottom: 1px solid var(--border-subtle);
+      vertical-align: middle;
+    }
+
+    .compare-table tr:last-child td {
+      border-bottom: none;
+    }
+
+    .compare-table td:first-child {
+      color: var(--text-high);
+      font-weight: 500;
+    }
+
+    .compare-table td:not(:first-child) {
+      text-align: center;
+    }
+
+    .compare-table tr:hover td {
+      background: rgba(255,255,255,0.02);
+    }
+
+    .check-yes { color: var(--accent); font-size: 1rem; }
+    .check-no  { color: var(--text-low); }
+    .muted-cell { color: var(--text-low); }
+
+    .compare-table .category-row td {
+      background: var(--bg-surface-high);
+      color: var(--text-low);
+      font-size: 0.6875rem;
+      font-weight: 700;
+      letter-spacing: 0.09em;
+      text-transform: uppercase;
+      padding: 0.45rem 1.25rem;
+      border-bottom: 1px solid var(--border-subtle);
+    }
+
+    .plan-tagline {
+      font-size: 0.8125rem;
+      color: var(--text-medium);
+      margin: -0.5rem 0 1.25rem;
+      line-height: 1.5;
+    }
+
+    .plan-features-group {
+      border-top: 1px solid var(--border-subtle);
+      padding-top: 1.25rem;
+      margin-top: 0.25rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+    }
+
+    .plan-features-group + .plan-features-group {
+      border-top: 1px solid var(--border-subtle);
+      padding-top: 1rem;
+      margin-top: 1rem;
+    }
+
+    .feat-group-label {
+      font-size: 0.625rem;
+      font-weight: 700;
+      letter-spacing: 0.09em;
+      text-transform: uppercase;
+      color: var(--text-low);
+      margin-bottom: 0.625rem;
+    }
+
+    @media (max-width: 720px) {
+      .pricing-grid {
+        grid-template-columns: 1fr;
+        max-width: 400px;
+        margin-left: auto;
+        margin-right: auto;
+      }
+      .featured-badge { font-size: 0.625rem; }
+      .plan-price .amount { font-size: 1.875rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ======== Top Nav ======== -->
+  <nav class="top-nav">
+    <a href="/" class="top-nav-brand">BABEH!com</a>
+    <div class="top-nav-links">
+      <a href="features.html" class="top-nav-link">Features</a>
+      <a href="pricing.html" class="top-nav-link active">Pricing</a>
+      <a href="use-cases.html" class="top-nav-link">Use Cases</a>
+      <a href="https://docs.babeh.com/" target="_blank" rel="noopener noreferrer" class="top-nav-link">Docs</a>
+    </div>
+  </nav>
+
+  <!-- ======== Pricing ======== -->
+  <main class="pricing-page">
+    <div class="pricing-inner">
+
+      <div class="pricing-hero">
+        <h1>Simple, transparent pricing</h1>
+        <p>Scale as you grow. No hidden fees.</p>
+      </div>
+
+      <!-- Billing toggle -->
+      <div class="billing-toggle">
+        <span id="lbl-monthly" class="active">Monthly</span>
+        <label class="toggle-switch">
+          <input type="checkbox" id="billing-switch" onchange="toggleBilling(this.checked)" />
+          <span class="toggle-track"></span>
+        </label>
+        <span id="lbl-annual">Annual <span class="billing-badge">Save 20%</span></span>
+      </div>
+
+      <!-- Cards -->
+      <div class="pricing-grid">
+
+        <!-- Starter -->
+        <div class="pricing-card disabled">
+          <div class="disabled-badge">Unavailable</div>
+          <div class="plan-name">Starter</div>
+          <p class="plan-tagline">Everything you need to get up and running quickly.</p>
+          <div class="plan-price">
+            <span class="amount" id="price-starter">Free</span><span class="period" id="period-starter" style="display:none;">/mo</span>
+            <span class="billed-note" id="note-starter">Currently unavailable</span>
+          </div>
+          <span class="plan-cta plan-cta-disabled">Unavailable</span>
+
+          <div class="plan-features-group">
+            <div class="feat-group-label">Knowledge Base</div>
+            <ul class="plan-features">
+              <li><span class="feat-check">✓</span><div>20 documents · 10 MB storage</div></li>
+            </ul>
+          </div>
+          <div class="plan-features-group">
+            <div class="feat-group-label">Analytics</div>
+            <ul class="plan-features">
+              <li><span class="feat-check">✓</span><div>Summary</div></li>
+              <li><span class="feat-check">✓</span><div>LLM Metrics</div></li>
+            </ul>
+          </div>
+          <div class="plan-features-group">
+            <div class="feat-group-label">Users</div>
+            <ul class="plan-features">
+              <li><span class="feat-check">✓</span><div>1 Admin · 1 Manager · 1 Content · 1 Analyst</div></li>
+            </ul>
+          </div>
+          <div class="plan-features-group">
+            <div class="feat-group-label">Configuration</div>
+            <ul class="plan-features">
+              <li><span class="feat-check">✓</span><div><span class="feat-label">Max Tokens</span>300 input / 900 output</div></li>
+              <li><span class="feat-check">✓</span><div>Custom query limit / month</div></li>
+              <li><span class="feat-check">✓</span><div>Shared tenant</div></li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Professional -->
+        <div class="pricing-card disabled">
+          <div class="disabled-badge">Coming Soon</div>
+          <div class="plan-name">Professional</div>
+          <p class="plan-tagline">Full analytics, richer content types, and more seats.</p>
+          <div class="plan-price">
+            <span class="amount" id="price-pro" style="display:none;">$245</span><span class="period" id="period-pro" style="display:none;">/mo</span>
+            <span class="billed-note" id="note-pro">Coming soon</span>
+          </div>
+          <span class="plan-cta plan-cta-disabled">Coming Soon</span>
+
+          <div class="plan-features-group">
+            <div class="feat-group-label">Knowledge Base</div>
+            <ul class="plan-features">
+              <li><span class="feat-check">✓</span><div>Everything in Starter</div></li>
+              <li><span class="feat-check">✓</span><div><span class="feat-label">Content Schemas</span>Pricing · Product · Financing</div></li>
+            </ul>
+          </div>
+          <div class="plan-features-group">
+            <div class="feat-group-label">Analytics</div>
+            <ul class="plan-features">
+              <li><span class="feat-check">✓</span><div>Query History</div></li>
+              <li><span class="feat-check">✓</span><div>Search Insight</div></li>
+              <li><span class="feat-check">✓</span><div>User Analytics</div></li>
+              <li><span class="feat-check">✓</span><div>Activity Log</div></li>
+            </ul>
+          </div>
+          <div class="plan-features-group">
+            <div class="feat-group-label">Users</div>
+            <ul class="plan-features">
+              <li><span class="feat-check">✓</span><div>3 Admin · 3 Manager · 3 Content · 3 Analyst</div></li>
+            </ul>
+          </div>
+          <div class="plan-features-group">
+            <div class="feat-group-label">Configuration</div>
+            <ul class="plan-features">
+              <li><span class="feat-check">✓</span><div><span class="feat-label">Max Tokens</span>600 input / 2,000 output</div></li>
+              <li><span class="feat-check">✓</span><div>Custom query limit / month</div></li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Enterprise -->
+        <div class="pricing-card featured">
+          <div class="featured-badge">Free &mdash; Limited Time</div>
+          <div class="plan-name">Enterprise</div>
+          <p class="plan-tagline">Dedicated infrastructure, full control, and unlimited scale.</p>
+          <div class="plan-price">
+            <span class="amount">Free</span>
+            <span class="billed-note">No-cost plan</span>
+          </div>
+          <a href="mailto:info@babeh.com?subject=Enterprise Plan" class="plan-cta">Get Started</a>
+
+          <div class="plan-features-group">
+            <div class="feat-group-label">All Professional features, plus</div>
+            <ul class="plan-features">
+              <li><span class="feat-check">✓</span><div>Search Debug Tools</div></li>
+              <li><span class="feat-check">✓</span><div>Whitelabel &amp; Custom Branding</div></li>
+              <li><span class="feat-check">✓</span><div>REST API Access</div></li>
+              <li><span class="feat-check">✓</span><div>BYOK — Bring Your Own Key</div></li>
+              <li><span class="feat-check">✓</span><div>SAML / SSO Authentication</div></li>
+              <li><span class="feat-check">✓</span><div>Multi-Region Deployment</div></li>
+              <li><span class="feat-check">✓</span><div>Unlimited users &amp; queries</div></li>
+              <li><span class="feat-check">✓</span><div>Dedicated support &amp; custom SLA</div></li>
+            </ul>
+          </div>
+        </div>
+
+      </div><!-- /pricing-grid -->
+
+      <!-- Comparison table -->
+      <div class="compare-section">
+        <h2>Full comparison</h2>
+        <div class="compare-table-wrap">
+          <table class="compare-table">
+            <thead>
+              <tr>
+                <th>Feature</th>
+                <th>Starter</th>
+                <th>Professional</th>
+                <th class="col-featured">Enterprise</th>
+              </tr>
+            </thead>
+            <tbody>
+              <!-- Knowledge Base -->
+              <tr class="category-row"><td colspan="4">Knowledge Base</td></tr>
+              <tr>
+                <td>Documents</td>
+                <td>20 docs</td>
+                <td>50 docs</td>
+                <td>Unlimited</td>
+              </tr>
+              <tr>
+                <td>Storage</td>
+                <td>10 MB</td>
+                <td>100 MB</td>
+                <td>Custom</td>
+              </tr>
+              <!-- Content & Schemas -->
+              <tr class="category-row"><td colspan="4">Content &amp; Schemas</td></tr>
+              <tr>
+                <td>Basic Content</td>
+                <td><span class="check-yes">✓</span></td>
+                <td><span class="check-yes">✓</span></td>
+                <td><span class="check-yes">✓</span></td>
+              </tr>
+              <tr>
+                <td>Pricing Schema</td>
+                <td><span class="check-no">—</span></td>
+                <td><span class="check-yes">✓</span></td>
+                <td><span class="check-yes">✓</span></td>
+              </tr>
+              <tr>
+                <td>Product Schema</td>
+                <td><span class="check-no">—</span></td>
+                <td><span class="check-yes">✓</span></td>
+                <td><span class="check-yes">✓</span></td>
+              </tr>
+              <tr>
+                <td>Financing Schema</td>
+                <td><span class="check-no">—</span></td>
+                <td><span class="check-yes">✓</span></td>
+                <td><span class="check-yes">✓</span></td>
+              </tr>
+              <!-- Analytics -->
+              <tr class="category-row"><td colspan="4">Analytics</td></tr>
+              <tr>
+                <td>Summary</td>
+                <td><span class="check-yes">✓</span></td>
+                <td><span class="check-yes">✓</span></td>
+                <td><span class="check-yes">✓</span></td>
+              </tr>
+              <tr>
+                <td>LLM Metrics</td>
+                <td><span class="check-yes">✓</span></td>
+                <td><span class="check-yes">✓</span></td>
+                <td><span class="check-yes">✓</span></td>
+              </tr>
+              <tr>
+                <td>Query History</td>
+                <td><span class="check-no">—</span></td>
+                <td><span class="check-yes">✓</span></td>
+                <td><span class="check-yes">✓</span></td>
+              </tr>
+              <tr>
+                <td>Search Insight</td>
+                <td><span class="check-no">—</span></td>
+                <td><span class="check-yes">✓</span></td>
+                <td><span class="check-yes">✓</span></td>
+              </tr>
+              <tr>
+                <td>User Analytics</td>
+                <td><span class="check-no">—</span></td>
+                <td><span class="check-yes">✓</span></td>
+                <td><span class="check-yes">✓</span></td>
+              </tr>
+              <tr>
+                <td>Activity Log</td>
+                <td><span class="check-no">—</span></td>
+                <td><span class="check-yes">✓</span></td>
+                <td><span class="check-yes">✓</span></td>
+              </tr>
+              <!-- Users -->
+              <tr class="category-row"><td colspan="4">Users</td></tr>
+              <tr>
+                <td>Admin</td>
+                <td>1</td>
+                <td>3</td>
+                <td>Unlimited</td>
+              </tr>
+              <tr>
+                <td>Management</td>
+                <td>1</td>
+                <td>3</td>
+                <td>Unlimited</td>
+              </tr>
+              <tr>
+                <td>Content</td>
+                <td>1</td>
+                <td>3</td>
+                <td>Unlimited</td>
+              </tr>
+              <tr>
+                <td>Analyst</td>
+                <td>1</td>
+                <td>3</td>
+                <td>Unlimited</td>
+              </tr>
+              <!-- Configuration -->
+              <tr class="category-row"><td colspan="4">Configuration</td></tr>
+              <tr>
+                <td>Max Input Token</td>
+                <td>300</td>
+                <td>600</td>
+                <td>Custom</td>
+              </tr>
+              <tr>
+                <td>Max Output Token</td>
+                <td>900</td>
+                <td>2,000</td>
+                <td>Custom</td>
+              </tr>
+              <tr>
+                <td>Query Limit</td>
+                <td>Custom / mo</td>
+                <td>Custom / mo</td>
+                <td>Unlimited</td>
+              </tr>
+              <!-- Infrastructure -->
+              <tr class="category-row"><td colspan="4">Infrastructure</td></tr>
+              <tr>
+                <td>Tenant</td>
+                <td>Shared</td>
+                <td>Dedicated</td>
+                <td>Dedicated</td>
+              </tr>
+              <tr>
+                <td>Multi-Region</td>
+                <td><span class="check-no">—</span></td>
+                <td><span class="check-no">—</span></td>
+                <td><span class="check-yes">✓</span></td>
+              </tr>
+              <!-- Enterprise Features -->
+              <tr class="category-row"><td colspan="4">Enterprise</td></tr>
+              <tr>
+                <td>Search Debug</td>
+                <td><span class="check-no">—</span></td>
+                <td><span class="check-no">—</span></td>
+                <td><span class="check-yes">✓</span></td>
+              </tr>
+              <tr>
+                <td>Whitelabel</td>
+                <td><span class="check-no">—</span></td>
+                <td><span class="check-no">—</span></td>
+                <td><span class="check-yes">✓</span></td>
+              </tr>
+              <tr>
+                <td>REST API</td>
+                <td><span class="check-no">—</span></td>
+                <td><span class="check-no">—</span></td>
+                <td><span class="check-yes">✓</span></td>
+              </tr>
+              <tr>
+                <td>BYOK</td>
+                <td><span class="check-no">—</span></td>
+                <td><span class="check-no">—</span></td>
+                <td><span class="check-yes">✓</span></td>
+              </tr>
+              <tr>
+                <td>SAML / SSO</td>
+                <td><span class="check-no">—</span></td>
+                <td><span class="check-no">—</span></td>
+                <td><span class="check-yes">✓</span></td>
+              </tr>
+              <tr>
+                <td>Dedicated Support</td>
+                <td><span class="check-no">—</span></td>
+                <td><span class="check-no">—</span></td>
+                <td><span class="check-yes">✓</span></td>
+              </tr>
+              <tr>
+                <td>Custom SLA</td>
+                <td><span class="check-no">—</span></td>
+                <td><span class="check-no">—</span></td>
+                <td><span class="check-yes">✓</span></td>
+              </tr>
+              <!-- Pricing -->
+              <tr class="category-row"><td colspan="4">Pricing</td></tr>
+              <tr>
+                <td>Monthly</td>
+                <td id="tbl-starter" class="muted-cell">Unavailable</td>
+                <td id="tbl-pro" class="muted-cell">Coming soon</td>
+                <td>Free</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <!-- ======== Footer ======== -->
+  <footer class="site-footer">
+    <nav class="footer-links">
+      <a href="features.html">Features</a>
+      <a href="pricing.html">Pricing</a>
+      <a href="privacy-policy.html">Privacy Policy</a>
+      <a href="terms.html">Terms &amp; Conditions</a>
+      <a href="mailto:info@babeh.com">Contact Us</a>
+    </nav>
+    <p class="footer-copy">&copy; 2026 Babeh.com &mdash; All rights reserved.</p>
+  </footer>
+
+  <script>
+    var monthly = { starter: 'Free', pro: 'Coming soon', enterprise: 'Free' };
+    var annual  = { starter: 'Free', pro: 'Coming soon', enterprise: 'Free' };
+
+    function toggleBilling(isAnnual) {
+      var prices = isAnnual ? annual : monthly;
+
+      document.getElementById('price-starter').textContent  = prices.starter;
+      document.getElementById('price-pro').textContent      = '';
+      document.getElementById('price-pro').style.display     = 'none';
+      document.getElementById('period-pro').style.display    = 'none';
+      document.getElementById('note-starter').textContent   = 'Currently unavailable';
+      document.getElementById('note-pro').textContent       = prices.pro;
+      document.getElementById('tbl-starter').textContent    = 'Unavailable';
+      document.getElementById('tbl-pro').textContent        = prices.pro;
+
+      document.getElementById('lbl-monthly').classList.toggle('active', !isAnnual);
+      document.getElementById('lbl-annual').classList.toggle('active', isAnnual);
+    }
+  </script>
+
+</body>
+</html>

@@ -1,0 +1,763 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="color-scheme" content="dark" />
+
+  <title>Features — Babeh.com</title>
+  <meta name="description" content="BABEH platform features: knowledge base management, hybrid search, analytics, embeddable widget, and more." />
+
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>💬</text></svg>" />
+  <link rel="stylesheet" href="css/style.css" />
+  <style>
+    /* ── Page layout ── */
+    .features-page {
+      position: relative;
+      z-index: 1;
+      flex: 1;
+      overflow-y: auto;
+      padding: 2rem 1.5rem 4rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .features-card {
+      width: 100%;
+      max-width: 800px;
+    }
+
+    /* ── Lang toggle ── */
+    .policy-lang-toggle {
+      display: flex;
+      gap: 0.5rem;
+      margin-bottom: 2.5rem;
+    }
+
+    .policy-lang-btn {
+      padding: 0.375rem 1rem;
+      border-radius: 8px;
+      border: 1px solid var(--border-subtle);
+      background: transparent;
+      color: var(--text-medium);
+      font-size: 0.8125rem;
+      font-family: inherit;
+      cursor: pointer;
+      transition: all var(--transition);
+    }
+
+    .policy-lang-btn.active,
+    .policy-lang-btn:hover {
+      background: var(--accent-dim);
+      border-color: rgba(187, 134, 252, 0.3);
+      color: var(--accent);
+    }
+
+    .policy-content { display: none; }
+    .policy-content.active { display: block; }
+
+    /* ── Hero intro ── */
+    .feat-hero h1 {
+      font-size: 1.75rem;
+      font-weight: 700;
+      color: var(--text-high);
+      margin-bottom: 0.5rem;
+    }
+
+    .feat-hero p.feat-tagline {
+      font-size: 1rem;
+      color: var(--text-medium);
+      line-height: 1.7;
+      margin-bottom: 3rem;
+      max-width: 640px;
+    }
+
+    /* ── Section headers ── */
+    .feat-section {
+      margin-bottom: 3rem;
+    }
+
+    .feat-section-header {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .feat-section h2 {
+      font-size: 1.125rem;
+      font-weight: 700;
+      color: var(--text-high);
+      margin: 0;
+    }
+
+    .feat-section-lead {
+      font-size: 0.9rem;
+      color: var(--accent);
+      font-style: italic;
+      margin: 0 0 0.75rem 2rem;
+    }
+
+    .feat-section-desc {
+      font-size: 0.875rem;
+      color: var(--text-medium);
+      line-height: 1.75;
+      margin: 0 0 1rem 2rem;
+    }
+
+    /* ── Feature list ── */
+    .feat-list {
+      list-style: none;
+      padding: 0;
+      margin: 0 0 0 2rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.625rem;
+    }
+
+    .feat-list li {
+      font-size: 0.875rem;
+      color: var(--text-medium);
+      line-height: 1.7;
+      padding-left: 1.25rem;
+      position: relative;
+    }
+
+    .feat-list li::before {
+      content: '›';
+      position: absolute;
+      left: 0;
+      color: var(--accent);
+      font-weight: 700;
+    }
+
+    .feat-list li strong {
+      color: var(--text-high);
+      font-weight: 600;
+    }
+
+    .feat-list li .feat-sub {
+      display: block;
+      margin-top: 0.25rem;
+      padding-left: 1rem;
+      color: var(--text-low);
+      font-size: 0.8125rem;
+    }
+
+    /* ── Settings table ── */
+    .feat-table-wrap {
+      margin: 0.75rem 0 0 2rem;
+      overflow-x: auto;
+    }
+
+    .feat-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.8125rem;
+    }
+
+    .feat-table th {
+      text-align: left;
+      padding: 0.5rem 1rem;
+      color: var(--text-low);
+      font-weight: 500;
+      border-bottom: 1px solid var(--border-subtle);
+      white-space: nowrap;
+    }
+
+    .feat-table td {
+      padding: 0.5rem 1rem;
+      color: var(--text-medium);
+      border-bottom: 1px solid var(--border-subtle);
+      vertical-align: top;
+    }
+
+    .feat-table tr:last-child td {
+      border-bottom: none;
+    }
+
+    .feat-table td:first-child {
+      color: var(--text-high);
+      font-weight: 500;
+      white-space: nowrap;
+    }
+
+    /* ── Divider ── */
+    .feat-divider {
+      border: none;
+      border-top: 1px solid var(--border-subtle);
+      margin: 0 0 3rem 0;
+    }
+
+    /* ── Infra block ── */
+    .feat-infra {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      padding: 1.25rem 1.5rem;
+      margin: 0.75rem 0 0 2rem;
+    }
+
+    .feat-infra ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .feat-infra ul li {
+      font-size: 0.8125rem;
+      color: var(--text-medium);
+      line-height: 1.65;
+      padding-left: 1.25rem;
+      position: relative;
+    }
+
+    .feat-infra ul li::before {
+      content: '•';
+      position: absolute;
+      left: 0;
+      color: var(--accent);
+    }
+
+    /* ── Closing CTA ── */
+    .feat-cta {
+      margin-top: 3rem;
+      padding: 1.5rem;
+      border-radius: var(--radius-md);
+      background: var(--accent-dim);
+      border: 1px solid rgba(187, 134, 252, 0.15);
+      text-align: center;
+    }
+
+    .feat-cta p {
+      font-size: 0.9375rem;
+      color: var(--text-medium);
+      line-height: 1.7;
+      margin: 0;
+    }
+
+    .feat-cta a {
+      color: var(--accent);
+      text-decoration: none;
+    }
+
+    .feat-cta a:hover { text-decoration: underline; }
+
+    @media (max-width: 600px) {
+      .features-page { padding: 1.5rem 1rem 3rem; }
+      .feat-hero h1 { font-size: 1.375rem; }
+      .feat-section-lead,
+      .feat-section-desc,
+      .feat-list,
+      .feat-table-wrap,
+      .feat-infra { margin-left: 0; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ======== Top Nav ======== -->
+  <nav class="top-nav">
+    <a href="/" class="top-nav-brand">BABEH!com</a>
+    <div class="top-nav-links">
+      <a href="features.html" class="top-nav-link active">Features</a>
+      <a href="pricing.html" class="top-nav-link">Pricing</a>
+      <a href="use-cases.html" class="top-nav-link">Use Cases</a>
+      <a href="https://docs.babeh.com/" target="_blank" rel="noopener noreferrer" class="top-nav-link">Docs</a>
+    </div>
+  </nav>
+
+  <!-- ======== Features ======== -->
+  <main class="features-page">
+    <div class="features-card">
+
+      <!-- Lang toggle -->
+      <div class="policy-lang-toggle">
+        <button class="policy-lang-btn active" onclick="switchLang('en')">English</button>
+        <button class="policy-lang-btn" onclick="switchLang('id')">Bahasa Indonesia</button>
+      </div>
+
+      <!-- ════════════ ENGLISH ════════════ -->
+      <div id="policy-en" class="policy-content active">
+
+        <div class="feat-hero">
+          <h1>Features</h1>
+          <p class="feat-tagline">Turn your documents into an intelligent, always-ready sales assistant.<br>
+          BABEH combines knowledge base management, structured product data, and AI-powered search into a single platform your team can deploy in minutes.</p>
+        </div>
+
+        <!-- Knowledge Base -->
+        <div class="feat-section">
+          <div class="feat-section-header">
+            
+            <h2>Knowledge Base Management</h2>
+          </div>
+          <p class="feat-section-lead">Upload any document and make it instantly searchable.</p>
+          <p class="feat-section-desc">Your files are automatically split into optimized chunks, indexed for full-text search, and embedded into a vector database for semantic understanding.</p>
+          <ul class="feat-list">
+            <li><strong>File Upload</strong> — Drag and drop PDF or TXT files up to 50 MB. Documents are parsed, chunked, and indexed automatically.</li>
+            <li><strong>URL Ingestion</strong> — Paste one or multiple web URLs. BABEH scrapes the main content and indexes it alongside your uploaded files.</li>
+            <li><strong>Smart Chunking</strong> — Configure chunk size (100–10,000 characters) and overlap (0–5,000 characters) to match your content type. Technical manuals need different chunking than marketing copy.</li>
+            <li><strong>Document Library</strong> — Browse, search, filter by type (file or URL), sort by chunk count, file size, or upload date. Paginate through 10, 25, or 50 records at a time.</li>
+            <li><strong>Edit &amp; Re-index</strong> — Update document content at any time. BABEH automatically re-chunks and re-embeds the updated content. Re-index a single document or the entire library in one click.</li>
+            <li><strong>AI Content Improvement</strong> — Let the AI review your document chunks and suggest clearer, more complete rewrites. Review the suggestion, accept it, and save — all without leaving the editor.</li>
+          </ul>
+        </div>
+        <hr class="feat-divider" />
+
+        <!-- Pricing Database -->
+        <div class="feat-section">
+          <div class="feat-section-header">
+            
+            <h2>Pricing Database</h2>
+          </div>
+          <p class="feat-section-lead">Give your AI real-time access to structured pricing data.</p>
+          <p class="feat-section-desc">A dedicated, schema-driven pricing database that integrates directly into the search pipeline. When a customer asks "how much does a Honda Veloz cost?", the AI pulls live pricing data — not stale document snippets.</p>
+          <ul class="feat-list">
+            <li><strong>Full CRUD</strong> — Add, edit, and delete pricing records through a clean form interface.</li>
+            <li><strong>Bulk Import</strong> — Import from CSV or JSON. Column headers are automatically mapped to your schema fields.</li>
+            <li><strong>Export</strong> — Download your entire pricing database as CSV or JSON with schema version metadata included.</li>
+            <li><strong>Full-Text Search</strong> — Search across product name, SKU, category, and description with weighted relevance (product name weighted 2× higher than other fields).</li>
+            <li><strong>Smart Price Detection</strong> — Natural language price queries are understood automatically:
+              <span class="feat-sub">"between 200 million and 300 million" — range search</span>
+              <span class="feat-sub">"under 1 billion" — upper-bound filter</span>
+              <span class="feat-sub">"budget 500 million" — lower-bound filter</span>
+              <span class="feat-sub">"around 300 million" — approximate search with ±20% tolerance</span>
+            </li>
+            <li><strong>VectorDB Sync</strong> — Push pricing records into the vector database so they appear in semantic search results alongside document content.</li>
+          </ul>
+        </div>
+        <hr class="feat-divider" />
+
+        <!-- Product Specs -->
+        <div class="feat-section">
+          <div class="feat-section-header">
+            
+            <h2>Product Specifications</h2>
+          </div>
+          <p class="feat-section-lead">Structure your product data with 30+ fields including 15 boolean feature flags.</p>
+          <p class="feat-section-desc">Purpose-built for automotive and product-heavy businesses. Every specification is searchable, filterable, and available to the AI during query time.</p>
+          <ul class="feat-list">
+            <li><strong>Comprehensive Schema</strong> — Brand, model, variant, year, transmission, engine type, fuel type, drive system, body type, seating capacity, price, and free-text spec notes.</li>
+            <li><strong>15 Feature Flags</strong> — Cooling seat, sunroof, 360 camera, wireless charging, cruise control, collision warning, lane assist, auto parking, Apple CarPlay, Android Auto, keyless entry, push start, rear camera, electric seat, heated seat.</li>
+            <li><strong>Three Import Formats</strong> — JSON, CSV, and Excel (.xlsx / .xls). The only data type in BABEH that supports Excel import.</li>
+            <li><strong>Dual Edit Mode</strong> — Edit through a structured form or switch to raw JSON for bulk field editing.</li>
+            <li><strong>Full-Text Search</strong> — Search across brand, model, variant, transmission, engine type, drive system, body type, and spec notes simultaneously.</li>
+          </ul>
+        </div>
+        <hr class="feat-divider" />
+
+        <!-- Dynamic Schema -->
+        <div class="feat-section">
+          <div class="feat-section-header">
+            
+            <h2>Dynamic Schema Editor</h2>
+          </div>
+          <p class="feat-section-lead">Modify your database structure at runtime — no migrations, no downtime.</p>
+          <p class="feat-section-desc">Add, rename, or remove fields from the pricing database without writing a single line of code. BABEH handles the ALTER TABLE, FTS rebuild, and VectorDB re-sync automatically.</p>
+          <ul class="feat-list">
+            <li><strong>Runtime Field Management</strong> — Add new columns, rename existing ones, or remove fields you no longer need. Changes take effect immediately.</li>
+            <li><strong>11 Configurable Properties Per Field</strong> — Name, display label, data type (text / number / integer / boolean), required flag, default value, display format (currency / badge / textarea / boolean badge), FTS indexed flag, FTS weight, VectorDB inclusion flag, VectorDB template, and sort order.</li>
+            <li><strong>Automatic Rebuild</strong> — When you change FTS or VectorDB settings, BABEH rebuilds the affected indexes in the background. A status indicator shows rebuild progress.</li>
+            <li><strong>Version History</strong> — Every schema change is versioned. Browse the full history and view a side-by-side diff between any two versions to see exactly what changed.</li>
+          </ul>
+          <p class="feat-section-desc" style="margin-top:0.75rem;">Superadmin access only.</p>
+        </div>
+        <hr class="feat-divider" />
+
+        <!-- Hybrid Search -->
+        <div class="feat-section">
+          <div class="feat-section-header">
+            
+            <h2>Hybrid Search Engine</h2>
+          </div>
+          <p class="feat-section-lead">Three search methods. One unified result.</p>
+          <p class="feat-section-desc">BABEH doesn't rely on a single search technique. It combines vector similarity, keyword matching, and structured data lookup — then fuses the results with configurable weights.</p>
+          <ul class="feat-list">
+            <li><strong>Vector Search</strong> — Semantic similarity via ChromaDB. Understands meaning, not just keywords. "affordable family car" matches "budget-friendly minivan" even though they share no words.</li>
+            <li><strong>BM25 Keyword Search</strong> — Full-text search via SQLite FTS5. Fast, precise, and excellent for exact product names, SKUs, and model numbers.</li>
+            <li><strong>Hybrid Fusion</strong> — Combine vector and BM25 results with configurable weights (default 50/50). Tune the balance to match your use case.</li>
+            <li><strong>Query Decomposition</strong> — Multi-topic queries like "compare Honda Veloz vs Toyota Avanza" are automatically split into sub-queries for more diverse, complete retrieval.</li>
+            <li><strong>Automatic Data Source Detection</strong> — The engine analyzes each query for pricing keywords (13 terms in Indonesian and English) and specification keywords (25+ terms). When detected, it automatically searches the relevant structured database in addition to the knowledge base.</li>
+            <li><strong>Relevance Threshold</strong> — Results below the configured threshold (default 0.25) are filtered out. Score visualization uses color coding: green for strong matches, yellow for moderate, red for weak.</li>
+            <li><strong>Citation System</strong> — Every AI response includes numbered source citations. Users can verify the information source for any claim in the response.</li>
+            <li><strong>Streaming Responses</strong> — Answers stream in real-time via Server-Sent Events. Users see the response forming word by word instead of waiting for the full answer.</li>
+          </ul>
+        </div>
+        <hr class="feat-divider" />
+
+        <!-- Analytics -->
+        <div class="feat-section">
+          <div class="feat-section-header">
+            
+            <h2>Analytics Dashboard</h2>
+          </div>
+          <p class="feat-section-lead">Understand how your knowledge base is being used.</p>
+          <p class="feat-section-desc">Five analytics views give you full visibility into queries, performance, token consumption, and user behavior.</p>
+          <ul class="feat-list">
+            <li><strong>Summary Dashboard</strong> — Total queries, 7-day query volume, active days, average processing time, total token usage, model usage breakdown, and data volume in MB.</li>
+            <li><strong>LLM Usage Metrics</strong> — Track input tokens, output tokens, and total tokens over configurable periods (7, 14, 30, 60, or 90 days). Visualized as line charts for token trends and bar charts for daily query volume.</li>
+            <li><strong>Search Insights</strong> — Unique search terms, average words per query, top queries ranked by frequency, and an interactive word cloud generated from all search history.</li>
+            <li><strong>User Analytics</strong> — Browser distribution, operating system breakdown, device type split (desktop / mobile / tablet), and geographic distribution of users.</li>
+            <li><strong>Query History</strong> — Full searchable log of every query with detail view. Filter by date range. Export to CSV for offline analysis.</li>
+          </ul>
+        </div>
+        <hr class="feat-divider" />
+
+        <!-- Widget -->
+        <div class="feat-section">
+          <div class="feat-section-header">
+            
+            <h2>Embeddable Chat Widget</h2>
+          </div>
+          <p class="feat-section-lead">Add AI-powered search to any website with two lines of code.</p>
+          <p class="feat-section-desc">A self-contained JavaScript widget that runs inside a Shadow DOM — completely isolated from your site's CSS and JavaScript. No dependencies. No conflicts.</p>
+          <ul class="feat-list">
+            <li><strong>Two-Line Installation</strong> — Add a script tag and call <code>KBaaSWidget.init()</code>. That's it.</li>
+            <li><strong>Zero Dependencies</strong> — No jQuery, no React, no framework required. Works on any website.</li>
+            <li><strong>Shadow DOM Isolation</strong> — The widget's styles and scripts are fully encapsulated. Your site's CSS cannot break the widget, and the widget cannot break your site.</li>
+            <li><strong>Programmatic API</strong> — <code>search()</code>, <code>clear()</code>, <code>destroy()</code>, <code>setTheme()</code>, <code>configure()</code>, <code>getConfig()</code> — full control from your application code.</li>
+            <li><strong>Auto Theme Detection</strong> — Automatically matches the user's OS preference (light or dark). Manual override available via API.</li>
+            <li><strong>Responsive Design</strong> — Adapts to desktop, tablet, and mobile viewports. Four breakpoints ensure the widget looks right on every screen size.</li>
+            <li><strong>Markdown Rendering</strong> — AI responses render with full Markdown support: headers, lists, bold, code blocks, tables.</li>
+            <li><strong>Keyboard Shortcut</strong> — <kbd>Ctrl+Enter</kbd> to submit a query.</li>
+          </ul>
+        </div>
+        <hr class="feat-divider" />
+
+        <!-- Access Management -->
+        <div class="feat-section">
+          <div class="feat-section-header">
+            
+            <h2>User &amp; Access Management</h2>
+          </div>
+          <p class="feat-section-lead">Four roles. Granular permissions. Full audit trail.</p>
+          <ul class="feat-list">
+            <li><strong>Four Roles</strong> — Superadmin (full access), Manager (content + settings), Editor (content only), Analyst (read-only analytics and settings).</li>
+            <li><strong>User Management</strong> — Create, edit, deactivate, and delete user accounts. Assign roles at creation or change them later. Superadmin only.</li>
+            <li><strong>Activity Log</strong> — Every POST, PUT, and DELETE request is automatically logged with timestamp, user, IP address, HTTP method, endpoint, status code, and user agent. Login passwords are automatically redacted. 120-day retention. Filterable by search term, HTTP method, and date range. Export to CSV.</li>
+          </ul>
+        </div>
+        <hr class="feat-divider" />
+
+        <!-- Config -->
+        <div class="feat-section">
+          <div class="feat-section-header">
+            
+            <h2>Configuration &amp; Tuning</h2>
+          </div>
+          <p class="feat-section-lead">Fine-tune every aspect of the AI behavior without touching code.</p>
+          <div class="feat-table-wrap">
+            <table class="feat-table">
+              <thead><tr><th>Setting</th><th>Range</th><th>Default</th></tr></thead>
+              <tbody>
+                <tr><td>LLM Provider</td><td>AWS Bedrock / Google Gemini</td><td>Bedrock</td></tr>
+                <tr><td>Search Method</td><td>Hybrid / Vector Only / BM25 Only</td><td>Hybrid</td></tr>
+                <tr><td>Vector vs BM25 Weight</td><td>0–100% each</td><td>50 / 50</td></tr>
+                <tr><td>Temperature</td><td>0.0 – 1.0</td><td>0.3</td></tr>
+                <tr><td>Relevance Threshold</td><td>0.0 – 1.0</td><td>0.25</td></tr>
+                <tr><td>Top-K Results</td><td>1 – 50</td><td>15</td></tr>
+                <tr><td>Chunk Size</td><td>100 – 10,000 chars</td><td>500</td></tr>
+                <tr><td>Chunk Overlap</td><td>0 – 5,000 chars</td><td>50</td></tr>
+                <tr><td>Use LLM</td><td>On / Off</td><td>On</td></tr>
+                <tr><td>Streaming</td><td>On / Off</td><td>On</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <hr class="feat-divider" />
+
+        <!-- Debug -->
+        <div class="feat-section">
+          <div class="feat-section-header">
+            
+            <h2>Developer &amp; Debug Tools</h2>
+          </div>
+          <p class="feat-section-lead">When something doesn't look right, see exactly what the search engine is doing.</p>
+          <ul class="feat-list">
+            <li><strong>Search Debugger</strong> — Run any query through the full pipeline and inspect all 9 stages: configuration, keyword detection, result summary, LLM context window, threshold filtering, hybrid fusion scores, raw vector results, raw BM25 results, and structured data (pricing + specs) results. Each result shows its relevance score with color-coded bars.</li>
+            <li><strong>VectorDB Viewer</strong> — Browse every record in the vector database. View embeddings, metadata, and source documents. Filter by source type. Superadmin only.</li>
+          </ul>
+        </div>
+        <hr class="feat-divider" />
+
+        <!-- Infrastructure -->
+        <div class="feat-section">
+          <div class="feat-section-header">
+            
+            <h2>Infrastructure</h2>
+          </div>
+          <div class="feat-infra">
+            <ul>
+              <li>SQLite for document metadata, pricing, product specs, settings, and user accounts — no external database server required</li>
+              <li>ChromaDB for vector embeddings — runs embedded, no separate service needed</li>
+              <li>MySQL for query history and activity logs — optional, for high-volume analytics</li>
+              <li>FastAPI backend with async support and Server-Sent Events for streaming</li>
+              <li>Fully idempotent migrations — run <code>migrate_server.py</code> on every deploy, safe to repeat</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="feat-cta">
+          <p>BABEH is built for teams who need a knowledge-powered AI assistant without the complexity of building one from scratch.<br><a href="/">Try it now →</a></p>
+        </div>
+
+      </div><!-- /en -->
+
+      <!-- ════════════ BAHASA ════════════ -->
+      <div id="policy-id" class="policy-content">
+
+        <div class="feat-hero">
+          <h1>Fitur</h1>
+          <p class="feat-tagline">Ubah dokumen Anda menjadi asisten penjualan cerdas yang selalu siap melayani.<br>
+          BABEH menggabungkan manajemen knowledge base, data produk terstruktur, dan pencarian berbasis AI dalam satu platform yang bisa di-deploy oleh tim Anda dalam hitungan menit.</p>
+        </div>
+
+        <!-- KB -->
+        <div class="feat-section">
+          <div class="feat-section-header">
+            
+            <h2>Manajemen Knowledge Base</h2>
+          </div>
+          <p class="feat-section-lead">Unggah dokumen apapun dan langsung bisa dicari.</p>
+          <p class="feat-section-desc">File Anda secara otomatis dipecah menjadi chunk yang optimal, diindeks untuk pencarian full-text, dan di-embed ke dalam vector database untuk pemahaman semantik.</p>
+          <ul class="feat-list">
+            <li><strong>Unggah File</strong> — Drag and drop file PDF atau TXT hingga 50 MB. Dokumen diproses, dipecah, dan diindeks secara otomatis.</li>
+            <li><strong>Ingest URL</strong> — Tempel satu atau beberapa URL halaman web. BABEH mengekstrak konten utama dan mengindeksnya bersama file yang telah diunggah.</li>
+            <li><strong>Smart Chunking</strong> — Atur ukuran chunk (100–10.000 karakter) dan overlap (0–5.000 karakter) sesuai jenis konten Anda. Dokumen teknis butuh pengaturan chunking yang berbeda dari materi marketing.</li>
+            <li><strong>Perpustakaan Dokumen</strong> — Telusuri, cari, filter berdasarkan tipe (file atau URL), urutkan berdasarkan jumlah chunk, ukuran file, atau tanggal unggah. Paginasi 10, 25, atau 50 data per halaman.</li>
+            <li><strong>Edit &amp; Re-index</strong> — Perbarui konten dokumen kapan saja. BABEH secara otomatis melakukan re-chunk dan re-embed konten yang diperbarui. Re-index satu dokumen atau seluruh perpustakaan dalam satu klik.</li>
+            <li><strong>Perbaikan Konten dengan AI</strong> — Biarkan AI meninjau chunk dokumen Anda dan menyarankan penulisan ulang yang lebih jelas dan lengkap. Tinjau saran, terima, dan simpan — semuanya tanpa meninggalkan editor.</li>
+          </ul>
+        </div>
+        <hr class="feat-divider" />
+
+        <!-- Pricing -->
+        <div class="feat-section">
+          <div class="feat-section-header">
+            
+            <h2>Database Harga</h2>
+          </div>
+          <p class="feat-section-lead">Berikan AI Anda akses real-time ke data harga terstruktur.</p>
+          <p class="feat-section-desc">Database harga yang digerakkan oleh skema, terintegrasi langsung ke dalam pipeline pencarian. Ketika pelanggan bertanya "berapa harga Honda Veloz?", AI mengambil data harga terkini — bukan potongan dokumen yang sudah usang.</p>
+          <ul class="feat-list">
+            <li><strong>CRUD Lengkap</strong> — Tambah, edit, dan hapus data harga melalui antarmuka form yang bersih.</li>
+            <li><strong>Import Massal</strong> — Import dari CSV atau JSON. Header kolom secara otomatis dipetakan ke field skema Anda.</li>
+            <li><strong>Ekspor</strong> — Unduh seluruh database harga sebagai CSV atau JSON lengkap dengan metadata versi skema.</li>
+            <li><strong>Pencarian Full-Text</strong> — Cari di seluruh nama produk, SKU, kategori, dan deskripsi dengan relevansi berbobot (nama produk diberi bobot 2× lebih tinggi dari field lainnya).</li>
+            <li><strong>Deteksi Harga Cerdas</strong> — Query harga dalam bahasa natural dipahami secara otomatis:
+              <span class="feat-sub">"antara 200 juta sampai 300 juta" — pencarian rentang</span>
+              <span class="feat-sub">"dibawah 1 miliar" — filter batas atas</span>
+              <span class="feat-sub">"budget 500 juta" — filter batas bawah</span>
+              <span class="feat-sub">"sekitar 300 juta" — pencarian perkiraan dengan toleransi ±20%</span>
+            </li>
+            <li><strong>Sinkronisasi VectorDB</strong> — Dorong data harga ke vector database agar muncul di hasil pencarian semantik bersama konten dokumen.</li>
+          </ul>
+        </div>
+        <hr class="feat-divider" />
+
+        <!-- Specs -->
+        <div class="feat-section">
+          <div class="feat-section-header">
+            
+            <h2>Spesifikasi Produk</h2>
+          </div>
+          <p class="feat-section-lead">Strukturkan data produk Anda dengan 30+ field termasuk 15 flag fitur boolean.</p>
+          <p class="feat-section-desc">Dirancang khusus untuk bisnis otomotif dan bisnis yang memiliki banyak produk. Setiap spesifikasi bisa dicari, difilter, dan tersedia untuk AI saat proses query.</p>
+          <ul class="feat-list">
+            <li><strong>Skema Komprehensif</strong> — Brand, model, varian, tahun, transmisi, tipe mesin, jenis bahan bakar, sistem penggerak, tipe bodi, kapasitas penumpang, harga, dan catatan spesifikasi bebas.</li>
+            <li><strong>15 Flag Fitur</strong> — Jok pendingin, sunroof, kamera 360, wireless charging, cruise control, peringatan tabrakan, lane assist, parkir otomatis, Apple CarPlay, Android Auto, keyless entry, push start, kamera belakang, jok elektrik, jok pemanas.</li>
+            <li><strong>Tiga Format Import</strong> — JSON, CSV, dan Excel (.xlsx / .xls). Satu-satunya tipe data di BABEH yang mendukung import Excel.</li>
+            <li><strong>Mode Edit Ganda</strong> — Edit melalui form terstruktur atau beralih ke JSON mentah untuk pengeditan field secara massal.</li>
+            <li><strong>Pencarian Full-Text</strong> — Cari di seluruh brand, model, varian, transmisi, tipe mesin, sistem penggerak, tipe bodi, dan catatan spesifikasi secara bersamaan.</li>
+          </ul>
+        </div>
+        <hr class="feat-divider" />
+
+        <!-- Schema -->
+        <div class="feat-section">
+          <div class="feat-section-header">
+            
+            <h2>Editor Skema Dinamis</h2>
+          </div>
+          <p class="feat-section-lead">Modifikasi struktur database saat runtime — tanpa migrasi, tanpa downtime.</p>
+          <p class="feat-section-desc">Tambah, ubah nama, atau hapus field dari database harga tanpa menulis satu baris kode pun. BABEH menangani ALTER TABLE, rebuild FTS, dan re-sync VectorDB secara otomatis.</p>
+          <ul class="feat-list">
+            <li><strong>Manajemen Field Runtime</strong> — Tambah kolom baru, ubah nama kolom yang ada, atau hapus field yang tidak diperlukan lagi. Perubahan langsung berlaku.</li>
+            <li><strong>11 Properti yang Dapat Dikonfigurasi Per Field</strong> — Nama, label tampilan, tipe data (teks / angka / integer / boolean), flag wajib, nilai default, format tampilan (mata uang / badge / textarea / boolean badge), flag indeks FTS, bobot FTS, flag penyertaan VectorDB, template VectorDB, dan urutan sortir.</li>
+            <li><strong>Rebuild Otomatis</strong> — Saat Anda mengubah pengaturan FTS atau VectorDB, BABEH membangun ulang indeks yang terpengaruh di latar belakang. Indikator status menampilkan progres rebuild.</li>
+            <li><strong>Riwayat Versi</strong> — Setiap perubahan skema diversikan. Telusuri riwayat lengkap dan lihat perbandingan berdampingan (diff) antara dua versi mana pun.</li>
+          </ul>
+          <p class="feat-section-desc" style="margin-top:0.75rem;">Hanya akses Superadmin.</p>
+        </div>
+        <hr class="feat-divider" />
+
+        <!-- Search -->
+        <div class="feat-section">
+          <div class="feat-section-header">
+            
+            <h2>Mesin Pencarian Hybrid</h2>
+          </div>
+          <p class="feat-section-lead">Tiga metode pencarian. Satu hasil terpadu.</p>
+          <p class="feat-section-desc">BABEH tidak bergantung pada satu teknik pencarian. Sistem ini menggabungkan kesamaan vektor, pencocokan kata kunci, dan pencarian data terstruktur — lalu menggabungkan hasilnya dengan bobot yang dapat dikonfigurasi.</p>
+          <ul class="feat-list">
+            <li><strong>Pencarian Vektor</strong> — Kesamaan semantik melalui ChromaDB. Memahami makna, bukan hanya kata kunci. "mobil keluarga terjangkau" cocok dengan "minivan hemat budget" meskipun tidak berbagi kata yang sama.</li>
+            <li><strong>Pencarian Kata Kunci BM25</strong> — Pencarian full-text melalui SQLite FTS5. Cepat, presisi, dan sangat baik untuk nama produk, SKU, dan nomor model yang tepat.</li>
+            <li><strong>Fusi Hybrid</strong> — Gabungkan hasil vektor dan BM25 dengan bobot yang dapat dikonfigurasi (default 50/50).</li>
+            <li><strong>Dekomposisi Query</strong> — Query multi-topik seperti "bandingkan Honda Veloz vs Toyota Avanza" secara otomatis dipecah menjadi sub-query untuk pengambilan hasil yang lebih beragam dan lengkap.</li>
+            <li><strong>Deteksi Sumber Data Otomatis</strong> — Mesin menganalisis setiap query untuk kata kunci harga (13 istilah) dan kata kunci spesifikasi (25+ istilah). Saat terdeteksi, sistem secara otomatis mencari database terstruktur yang relevan.</li>
+            <li><strong>Ambang Batas Relevansi</strong> — Hasil di bawah ambang batas (default 0,25) disaring. Visualisasi skor: hijau untuk kecocokan kuat, kuning untuk sedang, merah untuk lemah.</li>
+            <li><strong>Sistem Sitasi</strong> — Setiap respons AI menyertakan sitasi sumber bernomor.</li>
+            <li><strong>Respons Streaming</strong> — Jawaban di-stream secara real-time melalui Server-Sent Events.</li>
+          </ul>
+        </div>
+        <hr class="feat-divider" />
+
+        <!-- Analytics -->
+        <div class="feat-section">
+          <div class="feat-section-header">
+            
+            <h2>Dashboard Analitik</h2>
+          </div>
+          <p class="feat-section-lead">Pahami bagaimana knowledge base Anda digunakan.</p>
+          <p class="feat-section-desc">Lima tampilan analitik memberikan visibilitas penuh terhadap query, performa, konsumsi token, dan perilaku pengguna.</p>
+          <ul class="feat-list">
+            <li><strong>Dashboard Ringkasan</strong> — Total query, volume query 7 hari, hari aktif, rata-rata waktu pemrosesan, total penggunaan token, breakdown penggunaan model, dan volume data dalam MB.</li>
+            <li><strong>Metrik Penggunaan LLM</strong> — Lacak token input, output, dan total selama periode yang dapat dikonfigurasi (7, 14, 30, 60, atau 90 hari).</li>
+            <li><strong>Insight Pencarian</strong> — Istilah pencarian unik, rata-rata kata per query, daftar query teratas, dan word cloud interaktif.</li>
+            <li><strong>Analitik Pengguna</strong> — Distribusi browser, sistem operasi, tipe perangkat, dan distribusi geografis.</li>
+            <li><strong>Riwayat Query</strong> — Log lengkap setiap query. Filter berdasarkan rentang tanggal. Ekspor ke CSV.</li>
+          </ul>
+        </div>
+        <hr class="feat-divider" />
+
+        <!-- Widget -->
+        <div class="feat-section">
+          <div class="feat-section-header">
+            
+            <h2>Widget Chat Tertanam</h2>
+          </div>
+          <p class="feat-section-lead">Tambahkan pencarian berbasis AI ke website mana pun dengan dua baris kode.</p>
+          <p class="feat-section-desc">Widget JavaScript mandiri yang berjalan di dalam Shadow DOM — sepenuhnya terisolasi dari CSS dan JavaScript situs Anda. Tanpa dependensi. Tanpa konflik.</p>
+          <ul class="feat-list">
+            <li><strong>Instalasi Dua Baris</strong> — Tambahkan tag script dan panggil <code>KBaaSWidget.init()</code>. Selesai.</li>
+            <li><strong>Tanpa Dependensi</strong> — Tidak perlu jQuery, React, atau framework apapun.</li>
+            <li><strong>Isolasi Shadow DOM</strong> — Style dan script widget sepenuhnya terenkapsulasi.</li>
+            <li><strong>API Programatik</strong> — <code>search()</code>, <code>clear()</code>, <code>destroy()</code>, <code>setTheme()</code>, <code>configure()</code>, <code>getConfig()</code>.</li>
+            <li><strong>Deteksi Tema Otomatis</strong> — Secara otomatis menyesuaikan dengan preferensi OS pengguna (terang atau gelap).</li>
+            <li><strong>Desain Responsif</strong> — Empat breakpoint memastikan widget tampil sempurna di setiap ukuran layar.</li>
+            <li><strong>Rendering Markdown</strong> — Respons AI dirender dengan dukungan Markdown penuh.</li>
+            <li><strong>Shortcut Keyboard</strong> — <kbd>Ctrl+Enter</kbd> untuk mengirim query.</li>
+          </ul>
+        </div>
+        <hr class="feat-divider" />
+
+        <!-- Access -->
+        <div class="feat-section">
+          <div class="feat-section-header">
+            
+            <h2>Manajemen Pengguna &amp; Akses</h2>
+          </div>
+          <p class="feat-section-lead">Empat peran. Hak akses granular. Jejak audit lengkap.</p>
+          <ul class="feat-list">
+            <li><strong>Empat Peran</strong> — Superadmin (akses penuh), Manager (konten + pengaturan), Editor (konten saja), Analyst (analitik dan pengaturan read-only).</li>
+            <li><strong>Manajemen Pengguna</strong> — Buat, edit, nonaktifkan, dan hapus akun pengguna. Hanya Superadmin.</li>
+            <li><strong>Log Aktivitas</strong> — Setiap request POST, PUT, dan DELETE dicatat otomatis. Password login disunting. Retensi 120 hari. Dapat difilter dan diekspor ke CSV.</li>
+          </ul>
+        </div>
+        <hr class="feat-divider" />
+
+        <!-- Config -->
+        <div class="feat-section">
+          <div class="feat-section-header">
+            
+            <h2>Konfigurasi &amp; Tuning</h2>
+          </div>
+          <p class="feat-section-lead">Atur setiap aspek perilaku AI tanpa menyentuh kode.</p>
+          <div class="feat-table-wrap">
+            <table class="feat-table">
+              <thead><tr><th>Pengaturan</th><th>Rentang</th><th>Default</th></tr></thead>
+              <tbody>
+                <tr><td>Provider LLM</td><td>AWS Bedrock / Google Gemini</td><td>Bedrock</td></tr>
+                <tr><td>Metode Pencarian</td><td>Hybrid / Vektor Saja / BM25 Saja</td><td>Hybrid</td></tr>
+                <tr><td>Bobot Vektor vs BM25</td><td>0–100% masing-masing</td><td>50 / 50</td></tr>
+                <tr><td>Temperatur</td><td>0,0 – 1,0</td><td>0,3</td></tr>
+                <tr><td>Ambang Batas Relevansi</td><td>0,0 – 1,0</td><td>0,25</td></tr>
+                <tr><td>Hasil Top-K</td><td>1 – 50</td><td>15</td></tr>
+                <tr><td>Ukuran Chunk</td><td>100 – 10.000 karakter</td><td>500</td></tr>
+                <tr><td>Overlap Chunk</td><td>0 – 5.000 karakter</td><td>50</td></tr>
+                <tr><td>Gunakan LLM</td><td>Aktif / Nonaktif</td><td>Aktif</td></tr>
+                <tr><td>Streaming</td><td>Aktif / Nonaktif</td><td>Aktif</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <hr class="feat-divider" />
+
+        <!-- Debug -->
+        <div class="feat-section">
+          <div class="feat-section-header">
+            
+            <h2>Alat Developer &amp; Debug</h2>
+          </div>
+          <p class="feat-section-lead">Saat ada yang tidak beres, lihat persis apa yang dilakukan mesin pencarian.</p>
+          <ul class="feat-list">
+            <li><strong>Search Debugger</strong> — Jalankan query mana pun melalui seluruh pipeline dan inspeksi semua 9 tahapan: konfigurasi, deteksi kata kunci, ringkasan hasil, jendela konteks LLM, penyaringan ambang batas, skor fusi hybrid, hasil vektor mentah, hasil BM25 mentah, dan hasil data terstruktur.</li>
+            <li><strong>VectorDB Viewer</strong> — Telusuri setiap record di vector database. Filter berdasarkan tipe sumber. Hanya Superadmin.</li>
+          </ul>
+        </div>
+        <hr class="feat-divider" />
+
+        <!-- Infra -->
+        <div class="feat-section">
+          <div class="feat-section-header">
+            
+            <h2>Infrastruktur</h2>
+          </div>
+          <div class="feat-infra">
+            <ul>
+              <li>SQLite untuk metadata dokumen, harga, spesifikasi produk, pengaturan, dan akun pengguna — tidak memerlukan server database eksternal</li>
+              <li>ChromaDB untuk vector embedding — berjalan embedded, tidak perlu layanan terpisah</li>
+              <li>MySQL untuk riwayat query dan log aktivitas — opsional, untuk analitik volume tinggi</li>
+              <li>FastAPI backend dengan dukungan async dan Server-Sent Events untuk streaming</li>
+              <li>Migrasi fully idempotent — jalankan <code>migrate_server.py</code> di setiap deploy, aman untuk diulang</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="feat-cta">
+          <p>BABEH dibangun untuk tim yang membutuhkan asisten AI berbasis knowledge base tanpa kerumitan membangunnya dari nol.<br><a href="/">Coba sekarang →</a></p>
+        </div>
+
+      </div><!-- /id -->
+
+    </div>
+  </main>
+
+  <!-- ======== Footer ======== -->
+  <footer class="site-footer">
+    <nav class="footer-links">
+      <a href="features.html">Features</a>
+      <a href="privacy-policy.html">Privacy Policy</a>
+      <a href="terms.html">Terms &amp; Conditions</a>
+      <a href="mailto:info@babeh.com">Contact Us</a>
+    </nav>
+    <p class="footer-copy">&copy; 2026 Babeh.com &mdash; All rights reserved.</p>
+  </footer>
+
+  <script>
+    function switchLang(lang) {
+      document.getElementById('policy-en').classList.toggle('active', lang === 'en');
+      document.getElementById('policy-id').classList.toggle('active', lang === 'id');
+      document.querySelectorAll('.policy-lang-btn').forEach(function (btn, i) {
+        btn.classList.toggle('active', (i === 0 && lang === 'en') || (i === 1 && lang === 'id'));
+      });
+    }
+  </script>
+
+</body>
+</html>

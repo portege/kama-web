@@ -1,0 +1,728 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Use Cases — BABEH KBaaS</title>
+    <meta name="color-scheme" content="dark" />
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        /* ── Alias page-specific names → global dark theme vars ── */
+        :root {
+            --text-primary: var(--text-high);
+            --text-secondary: var(--text-medium);
+            --border-color: var(--border-subtle);
+            --bg-tertiary: var(--bg-surface-high);
+            --accent-color: var(--accent);
+            --accent-hover: #9b59f5;
+            --shadow: 0 2px 8px rgba(0, 0, 0, 0.45);
+            --shadow-lg: 0 10px 30px rgba(0, 0, 0, 0.65);
+        }
+
+        /* ── Override global body so this page can scroll ── */
+        body {
+            height: auto;
+            max-height: none;
+            display: block;
+            overflow-x: hidden;
+            overflow-y: auto;
+        }
+
+        /* ── Hide the radial gradient overlay used on index ── */
+        body::before {
+            display: none;
+        }
+
+        /* ── Page Layout ──────────────────────────────── */
+        .page-wrap { max-width: 1100px; margin: 0 auto; padding: 0 24px; }
+
+        /* ── Hero ─────────────────────────────────────── */
+        .hero {
+            text-align: center;
+            padding: 72px 0 56px;
+        }
+        .hero-badge {
+            display: inline-block;
+            font-size: 0.72rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: var(--accent);
+            background: var(--accent-dim);
+            padding: 5px 14px;
+            border-radius: 20px;
+            margin-bottom: 16px;
+        }
+        .hero h1 {
+            font-size: clamp(1.8rem, 4.5vw, 2.6rem);
+            font-weight: 800;
+            line-height: 1.15;
+            letter-spacing: -0.5px;
+            margin-bottom: 14px;
+            color: var(--text-primary);
+        }
+        .hero p {
+            font-size: 1.05rem;
+            color: var(--text-secondary);
+            max-width: 580px;
+            margin: 0 auto;
+            line-height: 1.7;
+        }
+
+        /* ── Use-Case Cards ───────────────────────────── */
+        .cases-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 20px;
+            padding-bottom: 72px;
+        }
+        .case-card {
+            background: var(--bg-surface);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 24px 22px;
+            box-shadow: var(--shadow);
+            transition: all 0.25s ease;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+        .case-card:hover {
+            box-shadow: var(--shadow-lg);
+            transform: translateY(-2px);
+            border-color: var(--accent-color);
+        }
+        .case-card-bar {
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 3px;
+        }
+        .case-card-label {
+            font-size: 0.68rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text-secondary);
+            margin-bottom: 6px;
+        }
+        .case-card h3 {
+            font-size: 1.1rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+            line-height: 1.3;
+            color: var(--text-primary);
+        }
+        .case-card > p {
+            font-size: 0.86rem;
+            color: var(--text-secondary);
+            line-height: 1.65;
+            margin-bottom: 14px;
+            flex: 1;
+        }
+        .case-features {
+            list-style: none;
+            padding: 0;
+            margin: 0 0 12px;
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+        .case-features li {
+            font-size: 0.8rem;
+            color: var(--text-primary);
+            padding-left: 16px;
+            position: relative;
+            line-height: 1.5;
+        }
+        .case-features li::before {
+            content: "—";
+            position: absolute;
+            left: 0;
+            color: var(--text-secondary);
+            font-weight: 600;
+        }
+        .case-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: auto; }
+        .tag {
+            display: inline-block;
+            font-size: 0.65rem;
+            font-weight: 600;
+            padding: 2px 9px;
+            border-radius: 10px;
+        }
+        .tag-sales      { background: rgba(59,130,246,0.15);  color: #60A5FA; }
+        .tag-support    { background: rgba(16,185,129,0.15);  color: #34D399; }
+        .tag-internal   { background: rgba(139,92,246,0.15);  color: #A78BFA; }
+        .tag-marketing  { background: rgba(245,158,11,0.15);  color: #FCD34D; }
+        .tag-ops        { background: rgba(236,72,153,0.15);  color: #F472B6; }
+        .tag-hr         { background: rgba(20,184,166,0.15);  color: #2DD4BF; }
+        .tag-edu        { background: rgba(249,115,22,0.15);  color: #FB923C; }
+        .tag-dev        { background: rgba(99,102,241,0.15);  color: #818CF8; }
+
+        /* ── Gradient bars ─────────────────────────────── */
+        .bar-1 { background: linear-gradient(135deg, #3B82F6, #8B5CF6); }
+        .bar-2 { background: linear-gradient(135deg, #F59E0B, #EF4444); }
+        .bar-3 { background: linear-gradient(135deg, #10B981, #06B6D4); }
+        .bar-4 { background: linear-gradient(135deg, #EC4899, #8B5CF6); }
+        .bar-5 { background: linear-gradient(135deg, #6366F1, #3B82F6); }
+        .bar-6 { background: linear-gradient(135deg, #14B8A6, #3B82F6); }
+        .bar-7 { background: linear-gradient(135deg, #F97316, #F59E0B); }
+        .bar-8 { background: linear-gradient(135deg, #E11D48, #EC4899); }
+
+        /* ── How It Works ─────────────────────────────── */
+        .how-section h2 {
+            font-size: 1.4rem;
+            font-weight: 700;
+            text-align: center;
+            margin-bottom: 36px;
+            color: var(--text-primary);
+        }
+        .how-steps {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+        }
+        .how-step { text-align: center; padding: 20px 12px; }
+        .how-step-num {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 36px; height: 36px;
+            border-radius: 50%;
+            background: var(--accent-color);
+            color: #fff;
+            font-weight: 700;
+            font-size: 0.95rem;
+            margin-bottom: 12px;
+        }
+        .how-step h4 {
+            font-size: 0.9rem;
+            font-weight: 700;
+            margin-bottom: 6px;
+            color: var(--text-primary);
+        }
+        .how-step p {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        /* ── CTA ──────────────────────────────────────── */
+        .cta-section {
+            text-align: center;
+            padding: 0 0 72px;
+        }
+        .cta-section h2 {
+            font-size: 1.4rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            color: var(--text-primary);
+        }
+        .cta-section > p {
+            color: var(--text-secondary);
+            font-size: 0.92rem;
+            margin-bottom: 20px;
+        }
+        .cta-btn {
+            display: inline-block;
+            padding: 10px 24px;
+            background: var(--accent);
+            color: #0d0d0d;
+            font-size: 0.88rem;
+            font-weight: 600;
+            border-radius: 8px;
+            text-decoration: none;
+            transition: var(--transition);
+        }
+        .cta-btn:hover { opacity: 0.85; }
+
+        /* ── Lang toggle ──────────────────────────────── */
+        .policy-lang-toggle {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 2.5rem;
+            padding-top: 2rem;
+        }
+        .policy-lang-btn {
+            padding: 0.375rem 1rem;
+            border-radius: 8px;
+            border: 1px solid var(--border-subtle);
+            background: transparent;
+            color: var(--text-medium);
+            font-size: 0.8125rem;
+            font-family: inherit;
+            cursor: pointer;
+            transition: all var(--transition);
+        }
+        .policy-lang-btn.active,
+        .policy-lang-btn:hover {
+            background: var(--accent-dim);
+            border-color: rgba(187, 134, 252, 0.3);
+            color: var(--accent);
+        }
+        .policy-content { display: none; }
+        .policy-content.active { display: block; }
+
+        /* ── Responsive ───────────────────────────────── */
+        @media (max-width: 768px) {
+            .hero { padding: 48px 0 36px; }
+            .hero h1 { font-size: 1.6rem; }
+            .cases-grid { grid-template-columns: 1fr; }
+            .how-steps { grid-template-columns: 1fr 1fr; }
+        }
+        @media (max-width: 480px) {
+            .how-steps { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+  <!-- ======== Top Nav ======== -->
+  <nav class="top-nav">
+    <a href="/" class="top-nav-brand">BABEH!com</a>
+    <div class="top-nav-links">
+      <a href="features.html" class="top-nav-link">Features</a>
+      <a href="pricing.html" class="top-nav-link">Pricing</a>
+      <a href="use-cases.html" class="top-nav-link active">Use Cases</a>
+      <a href="https://docs.babeh.com/" target="_blank" rel="noopener noreferrer" class="top-nav-link">Docs</a>
+    </div>
+  </nav>
+
+    <div class="page-wrap">
+
+        <!-- Lang toggle -->
+        <div class="policy-lang-toggle">
+            <button class="policy-lang-btn active" onclick="switchLang('en')">English</button>
+            <button class="policy-lang-btn" onclick="switchLang('id')">Bahasa Indonesia</button>
+        </div>
+
+        <!-- ════════════ ENGLISH ════════════ -->
+        <div id="policy-en" class="policy-content active">
+
+        <!-- ── Hero ───────────────────────────────────── -->
+        <section class="hero">
+            <div class="hero-badge">Use Cases</div>
+            <h1>One platform, endless possibilities</h1>
+            <p>BABEH turns your documents, pricing data, and product specs into an AI-powered knowledge engine. Here's what your team can build.</p>
+        </section>
+
+        <!-- ── Use Case Cards ─────────────────────────── -->
+        <section class="cases-grid">
+
+            <!-- 1. Interactive FAQ -->
+            <div class="case-card">
+                <div class="case-card-bar bar-1"></div>
+                <div class="case-card-label">Customer-Facing</div>
+                <h3>Interactive FAQ</h3>
+                <p>Replace static FAQ pages with a conversational interface. Customers type questions in natural language and get accurate answers directly from your knowledge base — complete with source citations.</p>
+                <ul class="case-features">
+                    <li>Answers from your documents, not generic templates</li>
+                    <li>Handles follow-up questions and phrasing variations</li>
+                    <li>Embed on any page with two lines of code</li>
+                    <li>Graceful fallback when no relevant info is found</li>
+                    <li>Supports queries in both Bahasa Indonesia and English</li>
+                </ul>
+                <div class="case-tags">
+                    <span class="tag tag-support">Support</span>
+                    <span class="tag tag-sales">Sales</span>
+                </div>
+            </div>
+
+            <!-- 2. AI Sales Assistant -->
+            <div class="case-card">
+                <div class="case-card-bar bar-2"></div>
+                <div class="case-card-label">Sales</div>
+                <h3>AI Sales Assistant</h3>
+                <p>A chatbot that knows your entire product catalog, real-time pricing, and specifications. Customers ask "Which SUV has a sunroof under 400 million?" and get an instant, data-driven answer.</p>
+                <ul class="case-features">
+                    <li>Pulls data directly from your pricing and spec databases</li>
+                    <li>Smart price range detection: "between 200 and 300 million"</li>
+                    <li>Product comparison: "compare Veloz vs Avanza"</li>
+                    <li>15 feature filters (sunroof, cruise control, CarPlay, etc.)</li>
+                    <li>Real-time streaming answers for an instant experience</li>
+                </ul>
+                <div class="case-tags">
+                    <span class="tag tag-sales">Sales</span>
+                    <span class="tag tag-marketing">Marketing</span>
+                </div>
+            </div>
+
+            <!-- 3. Internal Knowledge Hub -->
+            <div class="case-card">
+                <div class="case-card-bar bar-3"></div>
+                <div class="case-card-label">Internal</div>
+                <h3>Internal Knowledge Hub</h3>
+                <p>Give your team instant access to SOPs, policy documents, product manuals, and training materials. New employees find answers in seconds instead of asking five different people.</p>
+                <ul class="case-features">
+                    <li>Bulk-upload PDFs, text files, and web pages</li>
+                    <li>Semantic search understands intent, not just keywords</li>
+                    <li>Role-based access: editors manage content, analysts view data</li>
+                    <li>AI suggests content improvements for clarity</li>
+                    <li>Full audit trail of who changed what and when</li>
+                </ul>
+                <div class="case-tags">
+                    <span class="tag tag-internal">Internal</span>
+                    <span class="tag tag-ops">Operations</span>
+                </div>
+            </div>
+
+            <!-- 4. Product Comparison Engine -->
+            <div class="case-card">
+                <div class="case-card-bar bar-4"></div>
+                <div class="case-card-label">Customer-Facing</div>
+                <h3>Product Comparison Engine</h3>
+                <p>Let customers compare products using natural language. "What's the difference between the Civic and Corolla?" returns a structured comparison from your spec database, not a generic article.</p>
+                <ul class="case-features">
+                    <li>Query decomposition breaks down multi-product questions automatically</li>
+                    <li>Compare 30+ spec fields and 15 boolean features</li>
+                    <li>Pricing data automatically included when relevant</li>
+                    <li>Responses cite specific data sources for credibility</li>
+                    <li>Works in both conversational and structured formats</li>
+                </ul>
+                <div class="case-tags">
+                    <span class="tag tag-sales">Sales</span>
+                    <span class="tag tag-support">Support</span>
+                </div>
+            </div>
+
+            <!-- 5. Pricing Inquiry Bot -->
+            <div class="case-card">
+                <div class="case-card-bar bar-5"></div>
+                <div class="case-card-label">Sales</div>
+                <h3>Pricing Inquiry Bot</h3>
+                <p>Customers ask about pricing in natural language — in English or Bahasa Indonesia — and get accurate, always-current answers. No more outdated price lists or "please contact sales."</p>
+                <ul class="case-features">
+                    <li>"How much is the Honda Veloz?" — instant answer</li>
+                    <li>"Show all SUVs under 500 million" — filtered results</li>
+                    <li>"Around 300 million" — fuzzy search with 20% tolerance</li>
+                    <li>Bulk-import prices from CSV/JSON, update any time</li>
+                    <li>Schema editor to add custom fields without touching code</li>
+                </ul>
+                <div class="case-tags">
+                    <span class="tag tag-sales">Sales</span>
+                </div>
+            </div>
+
+            <!-- 6. Customer Support Automation -->
+            <div class="case-card">
+                <div class="case-card-bar bar-6"></div>
+                <div class="case-card-label">Support</div>
+                <h3>Customer Support Automation</h3>
+                <p>Reduce repetitive support tickets by letting AI handle first-line questions. Warranty policies, return procedures, service schedules — all answered instantly from your documentation.</p>
+                <ul class="case-features">
+                    <li>Ingest support docs, warranty terms, and policy PDFs</li>
+                    <li>Configurable relevance threshold prevents wrong answers</li>
+                    <li>Graceful fallback: "I don't have enough information" when uncertain</li>
+                    <li>Analytics dashboard tracks top questions to improve docs</li>
+                    <li>Word cloud reveals what customers are actually asking</li>
+                </ul>
+                <div class="case-tags">
+                    <span class="tag tag-support">Support</span>
+                    <span class="tag tag-ops">Operations</span>
+                </div>
+            </div>
+
+            <!-- 7. HR & Onboarding Assistant -->
+            <div class="case-card">
+                <div class="case-card-bar bar-7"></div>
+                <div class="case-card-label">Internal</div>
+                <h3>HR &amp; Onboarding Assistant</h3>
+                <p>New employees ask "how do I request leave?" or "what's the dress code?" and get answers from the HR handbook — without waiting for an HR response.</p>
+                <ul class="case-features">
+                    <li>Upload employee handbooks, policy documents, org charts</li>
+                    <li>Ingest URLs for internal wiki pages and intranet content</li>
+                    <li>Chunk size tuning optimised for policy documents</li>
+                    <li>Restrict access with role-based permissions</li>
+                    <li>Track which policies generate the most questions</li>
+                </ul>
+                <div class="case-tags">
+                    <span class="tag tag-hr">HR</span>
+                    <span class="tag tag-internal">Internal</span>
+                </div>
+            </div>
+
+            <!-- 8. Training & E-Learning -->
+            <div class="case-card">
+                <div class="case-card-bar bar-8"></div>
+                <div class="case-card-label">Education</div>
+                <h3>Training &amp; E-Learning</h3>
+                <p>Turn training materials into an interactive learning assistant. Trainees ask about procedures, product details, or compliance topics and get contextual answers with citations.</p>
+                <ul class="case-features">
+                    <li>Upload training manuals, slide decks (as PDFs), and guides</li>
+                    <li>AI Content Improvement rewrites unclear sections</li>
+                    <li>Citation system teaches trainees where to find the source</li>
+                    <li>Query history reveals knowledge gaps across the team</li>
+                    <li>Embed the widget directly into your LMS or training portal</li>
+                </ul>
+                <div class="case-tags">
+                    <span class="tag tag-edu">Education</span>
+                    <span class="tag tag-internal">Internal</span>
+                </div>
+            </div>
+
+        </section>
+
+        <!-- ── How It Works ───────────────────────────── -->
+        <section class="how-section">
+            <h2>How it works — in four steps</h2>
+            <div class="how-steps">
+                <div class="how-step">
+                    <div class="how-step-num">1</div>
+                    <h4>Upload your content</h4>
+                    <p>Drop in PDFs, text files, or paste URLs. Import prices as CSV and product specs as Excel. BABEH processes everything automatically.</p>
+                </div>
+                <div class="how-step">
+                    <div class="how-step-num">2</div>
+                    <h4>AI indexes everything</h4>
+                    <p>Documents are chunked, embedded into a vector database, and indexed for full-text search. Prices and specs are stored in a structured database.</p>
+                </div>
+                <div class="how-step">
+                    <div class="how-step-num">3</div>
+                    <h4>Embed the widget</h4>
+                    <p>Add two lines of code to your website. The chat widget runs in an isolated Shadow DOM — no conflicts with your styles or scripts.</p>
+                </div>
+                <div class="how-step">
+                    <div class="how-step-num">4</div>
+                    <h4>Customers get answers</h4>
+                    <p>Users ask in natural language. The hybrid search engine finds relevant content, and the LLM generates accurate, cited responses in real time.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- ── CTA ────────────────────────────────────── -->
+        <section class="cta-section">
+            <h2>Ready to build your use case?</h2>
+            <p>Start by uploading your first document. The AI handles the rest.</p>
+            <a class="cta-btn" href="../admin/">Open Admin Panel</a>
+        </section>
+
+        </div><!-- /policy-en -->
+
+        <!-- ════════════ BAHASA INDONESIA ════════════ -->
+        <div id="policy-id" class="policy-content">
+
+        <!-- ── Hero ───────────────────────────────────── -->
+        <section class="hero">
+            <div class="hero-badge">Use Cases</div>
+            <h1>Satu platform, kemungkinan tanpa batas</h1>
+            <p>BABEH mengubah dokumen, data harga, dan spesifikasi produk Anda menjadi mesin pengetahuan berbasis AI. Berikut yang bisa dibangun oleh tim Anda.</p>
+        </section>
+
+        <!-- ── Use Case Cards ─────────────────────────── -->
+        <section class="cases-grid">
+
+            <!-- 1. Interactive FAQ -->
+            <div class="case-card">
+                <div class="case-card-bar bar-1"></div>
+                <div class="case-card-label">Customer-Facing</div>
+                <h3>Interactive FAQ</h3>
+                <p>Ganti halaman FAQ statis dengan antarmuka percakapan. Pelanggan mengetik pertanyaan dalam bahasa natural dan mendapat jawaban akurat langsung dari knowledge base — lengkap dengan sitasi sumber.</p>
+                <ul class="case-features">
+                    <li>Jawaban dari dokumen Anda, bukan template generik</li>
+                    <li>Menangani pertanyaan lanjutan dan variasi frasa</li>
+                    <li>Embed di halaman mana pun dengan dua baris kode</li>
+                    <li>Fallback yang elegan saat tidak ada info relevan</li>
+                    <li>Mendukung query Bahasa Indonesia dan Inggris</li>
+                </ul>
+                <div class="case-tags">
+                    <span class="tag tag-support">Support</span>
+                    <span class="tag tag-sales">Sales</span>
+                </div>
+            </div>
+
+            <!-- 2. AI Sales Assistant -->
+            <div class="case-card">
+                <div class="case-card-bar bar-2"></div>
+                <div class="case-card-label">Sales</div>
+                <h3>AI Sales Assistant</h3>
+                <p>Chatbot yang menguasai seluruh katalog produk, harga real-time, dan spesifikasi. Pelanggan bertanya "SUV mana yang punya sunroof di bawah 400 juta?" dan langsung dapat jawaban yang tepat berbasis data.</p>
+                <ul class="case-features">
+                    <li>Menarik data langsung dari database harga dan spesifikasi</li>
+                    <li>Deteksi rentang harga cerdas: "antara 200 juta sampai 300 juta"</li>
+                    <li>Perbandingan produk: "bandingkan Veloz vs Avanza"</li>
+                    <li>15 filter fitur (sunroof, cruise control, CarPlay, dll.)</li>
+                    <li>Jawaban streaming real-time untuk pengalaman instan</li>
+                </ul>
+                <div class="case-tags">
+                    <span class="tag tag-sales">Sales</span>
+                    <span class="tag tag-marketing">Marketing</span>
+                </div>
+            </div>
+
+            <!-- 3. Internal Knowledge Hub -->
+            <div class="case-card">
+                <div class="case-card-bar bar-3"></div>
+                <div class="case-card-label">Internal</div>
+                <h3>Internal Knowledge Hub</h3>
+                <p>Berikan tim Anda akses instan ke SOP, dokumen kebijakan, manual produk, dan materi pelatihan. Karyawan baru menemukan jawaban dalam hitungan detik alih-alih bertanya ke lima orang berbeda.</p>
+                <ul class="case-features">
+                    <li>Unggah PDF, file teks, dan halaman web secara massal</li>
+                    <li>Pencarian semantik memahami maksud, bukan hanya kata kunci</li>
+                    <li>Akses berbasis peran: editor kelola konten, analis lihat data</li>
+                    <li>AI menyarankan perbaikan konten untuk kejelasan</li>
+                    <li>Jejak audit lengkap siapa mengubah apa dan kapan</li>
+                </ul>
+                <div class="case-tags">
+                    <span class="tag tag-internal">Internal</span>
+                    <span class="tag tag-ops">Operations</span>
+                </div>
+            </div>
+
+            <!-- 4. Product Comparison Engine -->
+            <div class="case-card">
+                <div class="case-card-bar bar-4"></div>
+                <div class="case-card-label">Customer-Facing</div>
+                <h3>Mesin Perbandingan Produk</h3>
+                <p>Biarkan pelanggan membandingkan produk menggunakan bahasa natural. "Apa bedanya Civic dan Corolla?" menghasilkan perbandingan terstruktur dari database spesifikasi Anda, bukan artikel generik.</p>
+                <ul class="case-features">
+                    <li>Dekomposisi query memecah pertanyaan multi-produk otomatis</li>
+                    <li>Bandingkan 30+ field spesifikasi dan 15 fitur boolean</li>
+                    <li>Data harga otomatis disertakan saat relevan</li>
+                    <li>Respons menyitasi sumber data spesifik untuk kredibilitas</li>
+                    <li>Berfungsi dalam format percakapan maupun terstruktur</li>
+                </ul>
+                <div class="case-tags">
+                    <span class="tag tag-sales">Sales</span>
+                    <span class="tag tag-support">Support</span>
+                </div>
+            </div>
+
+            <!-- 5. Pricing Inquiry Bot -->
+            <div class="case-card">
+                <div class="case-card-bar bar-5"></div>
+                <div class="case-card-label">Sales</div>
+                <h3>Bot Informasi Harga</h3>
+                <p>Pelanggan bertanya soal harga dalam bahasa natural — dalam Bahasa Indonesia atau Inggris — dan mendapat jawaban akurat yang selalu terbaru. Tidak ada lagi daftar harga usang atau "silakan hubungi sales."</p>
+                <ul class="case-features">
+                    <li>"Harga Honda Veloz berapa?" — jawaban instan</li>
+                    <li>"Tampilkan semua SUV di bawah 500 juta" — hasil terfilter</li>
+                    <li>"Sekitar 300 juta" — pencarian perkiraan dengan toleransi 20%</li>
+                    <li>Import harga massal dari CSV/JSON, perbarui kapan saja</li>
+                    <li>Editor skema untuk menambah field kustom tanpa ubah kode</li>
+                </ul>
+                <div class="case-tags">
+                    <span class="tag tag-sales">Sales</span>
+                </div>
+            </div>
+
+            <!-- 6. Customer Support Automation -->
+            <div class="case-card">
+                <div class="case-card-bar bar-6"></div>
+                <div class="case-card-label">Support</div>
+                <h3>Otomasi Customer Support</h3>
+                <p>Kurangi tiket support berulang dengan membiarkan AI menangani pertanyaan lini pertama. Kebijakan garansi, prosedur retur, jadwal servis — semua dijawab instan dari dokumentasi Anda.</p>
+                <ul class="case-features">
+                    <li>Ingest dokumen support, syarat garansi, dan PDF kebijakan</li>
+                    <li>Ambang batas relevansi yang dapat dikonfigurasi mencegah jawaban salah</li>
+                    <li>Fallback elegan: "Saya tidak punya informasi cukup" saat tidak yakin</li>
+                    <li>Dashboard analitik melacak pertanyaan teratas untuk perbaikan docs</li>
+                    <li>Word cloud mengungkap apa yang sebenarnya ditanyakan pelanggan</li>
+                </ul>
+                <div class="case-tags">
+                    <span class="tag tag-support">Support</span>
+                    <span class="tag tag-ops">Operations</span>
+                </div>
+            </div>
+
+            <!-- 7. HR & Onboarding Assistant -->
+            <div class="case-card">
+                <div class="case-card-bar bar-7"></div>
+                <div class="case-card-label">Internal</div>
+                <h3>Asisten HR &amp; Onboarding</h3>
+                <p>Karyawan baru bertanya "bagaimana cara mengajukan cuti?" atau "apa aturan berpakaian?" dan mendapat jawaban dari handbook HR — tanpa menunggu respons HR.</p>
+                <ul class="case-features">
+                    <li>Unggah handbook karyawan, dokumen kebijakan, bagan organisasi</li>
+                    <li>Ingest URL untuk halaman wiki internal dan konten intranet</li>
+                    <li>Penyesuaian ukuran chunk dioptimalkan untuk dokumen kebijakan</li>
+                    <li>Batasi akses dengan permission berbasis peran</li>
+                    <li>Lacak kebijakan mana yang paling banyak menimbulkan pertanyaan</li>
+                </ul>
+                <div class="case-tags">
+                    <span class="tag tag-hr">HR</span>
+                    <span class="tag tag-internal">Internal</span>
+                </div>
+            </div>
+
+            <!-- 8. Training & E-Learning -->
+            <div class="case-card">
+                <div class="case-card-bar bar-8"></div>
+                <div class="case-card-label">Edukasi</div>
+                <h3>Training &amp; E-Learning</h3>
+                <p>Ubah materi pelatihan menjadi asisten belajar interaktif. Peserta training bertanya tentang prosedur, detail produk, atau topik compliance dan mendapat jawaban kontekstual dengan sitasi.</p>
+                <ul class="case-features">
+                    <li>Unggah manual pelatihan, slide deck (sebagai PDF), dan panduan</li>
+                    <li>AI Content Improvement menulis ulang bagian yang kurang jelas</li>
+                    <li>Sistem sitasi mengajarkan peserta di mana menemukan sumber</li>
+                    <li>Riwayat query mengungkap gap pengetahuan di seluruh tim</li>
+                    <li>Embed widget langsung ke LMS atau portal pelatihan Anda</li>
+                </ul>
+                <div class="case-tags">
+                    <span class="tag tag-edu">Education</span>
+                    <span class="tag tag-internal">Internal</span>
+                </div>
+            </div>
+
+        </section>
+
+        <!-- ── How It Works ───────────────────────────── -->
+        <section class="how-section">
+            <h2>Cara kerja — dalam empat langkah</h2>
+            <div class="how-steps">
+                <div class="how-step">
+                    <div class="how-step-num">1</div>
+                    <h4>Unggah konten Anda</h4>
+                    <p>Drop PDF, file teks, atau tempel URL. Import harga sebagai CSV dan spesifikasi produk sebagai Excel. BABEH memproses semuanya otomatis.</p>
+                </div>
+                <div class="how-step">
+                    <div class="how-step-num">2</div>
+                    <h4>AI mengindeks semuanya</h4>
+                    <p>Dokumen di-chunk, di-embed ke vector database, dan diindeks untuk full-text search. Harga dan spesifikasi disimpan di database terstruktur.</p>
+                </div>
+                <div class="how-step">
+                    <div class="how-step-num">3</div>
+                    <h4>Embed widget</h4>
+                    <p>Tambahkan dua baris kode ke website Anda. Widget chat berjalan di Shadow DOM yang terisolasi — tanpa konflik dengan style atau script Anda.</p>
+                </div>
+                <div class="how-step">
+                    <div class="how-step-num">4</div>
+                    <h4>Pelanggan mendapat jawaban</h4>
+                    <p>Pengguna bertanya dalam bahasa natural. Mesin pencarian hybrid menemukan konten relevan, dan LLM menghasilkan respons akurat dengan sitasi secara real-time.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- ── CTA ────────────────────────────────────── -->
+        <section class="cta-section">
+            <h2>Siap membangun use case Anda?</h2>
+            <p>Mulai dengan mengunggah dokumen pertama Anda. AI yang menangani sisanya.</p>
+            <a class="cta-btn" href="../admin/">Buka Admin Panel</a>
+        </section>
+
+        </div><!-- /policy-id -->
+
+    </div>
+
+  <!-- ======== Footer ======== -->
+  <footer class="site-footer">
+    <nav class="footer-links">
+      <a href="features.html">Features</a>
+      <a href="privacy-policy.html">Privacy Policy</a>
+      <a href="terms.html">Terms &amp; Conditions</a>
+      <a href="mailto:info@babeh.com">Contact Us</a>
+    </nav>
+    <p class="footer-copy">&copy; 2026 Babeh.com &mdash; All rights reserved.</p>
+  </footer>
+
+
+  <script>
+    function switchLang(lang) {
+      document.getElementById('policy-en').classList.toggle('active', lang === 'en');
+      document.getElementById('policy-id').classList.toggle('active', lang === 'id');
+      document.querySelectorAll('.policy-lang-btn').forEach(function (btn, i) {
+        btn.classList.toggle('active', (i === 0 && lang === 'en') || (i === 1 && lang === 'id'));
+      });
+    }
+  </script>
+
+</body>
+</html>

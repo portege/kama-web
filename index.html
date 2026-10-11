@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="color-scheme" content="dark" />
+
+  <title>Babeh.com — Coba Tanya Babeh!</title>
+  <meta name="description" content="Babeh.com — Asisten cerdas yang siap menjawab pertanyaan seputar layanan kami. Coba tanya babeh!" />
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="Babeh.com — Coba Tanya Babeh!" />
+  <meta property="og:description" content="Asisten cerdas yang siap menjawab pertanyaan seputar layanan kami." />
+  <meta property="og:url" content="https://babeh.com" />
+  <meta property="og:site_name" content="Babeh.com" />
+
+  <!-- Favicon (ganti dengan favicon asli nanti) -->
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>💬</text></svg>" />
+
+  <!-- Stylesheet -->
+  <link rel="stylesheet" href="css/style.css" />
+  <style>
+    .chat-layout {
+      display: flex;
+      align-items: stretch;
+      gap: 0.75rem;
+      width: 100%;
+      max-width: 640px;
+      flex: 1;
+      min-height: 0;
+    }
+    .chat-layout .chat-container {
+      max-width: none;
+      flex: 1;
+      min-width: 0;
+    }
+    .art-panel {
+      display: flex;
+      flex-direction: column;
+      gap: 0.375rem;
+      flex-shrink: 0;
+      padding-top: 0.25rem;
+    }
+    .art-panel-label {
+      font-size: 0.625rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--text-low);
+      margin-bottom: 0.125rem;
+      white-space: nowrap;
+    }
+    .art-btn {
+      background: transparent;
+      border: 1px solid var(--border-subtle);
+      border-radius: 20px;
+      padding: 0.3rem 0.75rem;
+      font-size: 0.6875rem;
+      font-family: inherit;
+      color: var(--text-low);
+      cursor: pointer;
+      white-space: nowrap;
+      transition: all 0.18s;
+      text-align: left;
+    }
+    .art-btn:hover {
+      border-color: var(--accent);
+      color: var(--text-high);
+    }
+    .art-btn.active {
+      background: var(--accent-dim);
+      border-color: var(--accent);
+      color: var(--accent);
+      font-weight: 600;
+    }
+    @media (max-width: 560px) {
+      .chat-layout { flex-direction: column; }
+      .art-panel { flex-direction: row; flex-wrap: wrap; padding-top: 0; }
+      .art-panel-label { width: 100%; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ======== Top Nav ======== -->
+  <nav class="top-nav">
+    <a href="/" class="top-nav-brand">BABEH!com</a>
+    <div class="top-nav-links">
+      <a href="features.html" class="top-nav-link">Features</a>
+      <a href="pricing.html" class="top-nav-link">Pricing</a>
+      <a href="use-cases.html" class="top-nav-link">Use Cases</a>
+      <a href="https://docs.babeh.com/" target="_blank" rel="noopener noreferrer" class="top-nav-link">Docs</a>
+    </div>
+  </nav>
+
+  <!-- ======== Brand Header ======== -->
+  <header class="brand-header">
+    <span class="kbaas-widget-title">KAMA</span>
+    Knowledge Augmented Mining Agent
+  </header>
+
+  <!-- ======== Hero / Chat Widget ======== -->
+  <main class="chat-hero">
+
+    <div class="chat-layout">
+      <div class="chat-container">
+        <div id="kbaas-widget"></div>
+      </div>
+
+      <div class="art-panel">
+        <span class="art-panel-label">Gaya Bicara</span>
+        <button class="art-btn active" data-art="default">Default</button>
+        <button class="art-btn" data-art="format">Format</button>
+        <button class="art-btn" data-art="english_casual">EN Casual</button>
+        <button class="art-btn" data-art="indonesian_casual">ID Casual</button>
+        <button class="art-btn" data-art="indonesian_seller">ID Seller</button>
+        <button class="art-btn" data-art="indonesian_cowok">ID Cowok</button>
+      </div>
+    </div>
+
+    <div class="trust-badges">
+      <span>Powered by AI</span>
+      <span class="separator"></span>
+      <span>Engineered by <a href="https://mas-mas.it" target="_blank" rel="noopener noreferrer" class="trust-link">Mas-Mas.IT</a></span>
+    </div>
+  </main>
+
+  <!-- ======== Footer ======== -->
+  <footer class="site-footer">
+    <nav class="footer-links">
+      <a href="privacy-policy.html">Kebijakan Privasi</a>
+      <a href="terms.html">Syarat &amp; Ketentuan</a>
+      <a href="mailto:info@babeh.com">Hubungi Kami</a>
+    </nav>
+    <p class="footer-copy">&copy; 2026 Babeh.com &mdash; Hak cipta dilindungi.</p>
+  </footer>
+
+  <!-- ======== Scripts ======== -->
+
+  <!-- KBaaS Widget -->
+  <script src="js/babeh-widget.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      KBaaSChat.init({
+        apiBaseUrl:  'https://ws-babeh.ws-a.babeh.com',
+        apiKey:      'wSNfQxz57OT_XWX4JmXqPgApRv0o1zmGV1Qr3aIRVqc',
+        title:       'Tanya Babeh!',
+        accentColor: '#BB86FC',
+        _mountTarget: '.chat-container',
+        suggestions: [
+          'Service apa saja yang tersedia?',
+          'Berapa harga paketnya?',
+          'Bagaimana cara mendaftar?',
+        ],
+      });
+
+      // Hide widget header + internal art-wrap via shadow DOM injection
+      var host = document.getElementById('kbaas-chat-host');
+      if (host && host.shadowRoot) {
+        var s = document.createElement('style');
+        s.textContent = '.kbc-header { display: none !important; } .kbc-art-wrap { display: none !important; }';
+        host.shadowRoot.appendChild(s);
+      }
+
+      // Wire external articulation pills
+      document.querySelectorAll('.art-btn').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          document.querySelectorAll('.art-btn').forEach(function (b) { b.classList.remove('active'); });
+          btn.classList.add('active');
+          KBaaSChat.setArticulation(btn.dataset.art);
+        });
+      });
+    });
+  </script>
+
+</body>
+</html>

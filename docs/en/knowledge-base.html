@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head> <meta charset="UTF-8" /> <meta name="viewport" content="width=device-width, initial-scale=1.0" /> <title>Knowledge Base — BABEH Docs</title> <link rel="stylesheet" href="../css/docs.css" />
+</head>
+<body> <button class="hamburger" id="hamburgerBtn">Menu</button> <div id="sidebar-root"></div> <div class="doc-layout"> <main class="doc-main"> <div id="breadcrumb-root"></div> <h1>Knowledge Base</h1> <p class="subtitle"> Upload documents, ingest web content, and manage your document library — the foundation of your AI-powered search.
+ </p> <div class="callout callout-info"> <div class="callout-title">Who can access this?</div> <p> <span class="badge badge-role-editor">editor</span> <span class="badge badge-role-manager">manager</span> <span class="badge badge-role-superadmin">superadmin</span> </p> </div> <!-- ============================================ --> <h2 id="upload-files">Upload Files</h2> <p> Upload documents that will be automatically processed, chunked, and indexed for both
+ semantic (vector) and keyword (BM25) search.
+ </p> <h3 id="how-to-upload">How to Upload</h3> <ol class="steps"> <li>Navigate to <strong>Knowledge Base</strong> from the sidebar.</li> <li>In the <strong>Upload File</strong> card, either <strong>drag and drop</strong> a file onto the upload area, or click <strong>Browse</strong> to select a file.</li> <li>The file will be uploaded, processed, chunked, and indexed automatically.</li> <li>A progress indicator shows the processing status.</li> <li>Once complete, the document appears in the Document Library below.</li> </ol> <div class="screenshot-wrapper"> <div class="screenshot-placeholder"> <div class="ph-icon"></div> <img src="../images/upload-file-babeh.png" alt="File upload area" /> <div class="ph-label">Screenshot: Upload file card with drag-and-drop area and browse button</div> </div> </div> <h3 id="supported-files">Supported File Types & Limits</h3> <table> <thead> <tr><th>Property</th><th>Value</th></tr> </thead> <tbody> <tr><td>Supported formats</td><td><code>.pdf</code>, <code>.txt</code></td></tr> <tr><td>Maximum file size</td><td><strong>2 MB</strong></td></tr> <tr><td>Text encoding (TXT)</td><td>UTF-8, UTF-16, Latin-1, CP1252 (auto-detected)</td></tr> </tbody> </table> <div class="callout callout-warning"> <div class="callout-title">File Requirements</div> <ul> <li>PDF files must contain extractable text (scanned images without OCR will result in empty content).</li> <li>Only <code>.pdf</code> and <code>.txt</code> extensions are accepted.</li> <li>Files larger than 2 MB will be rejected with an error message.</li> </ul> </div> <h3 id="chunking-process">How Chunking Works</h3> <p> When a file is uploaded, the text content is split into smaller pieces called <strong>chunks</strong>.
+ Each chunk is then:
+ </p> <ul> <li><strong>Embedded</strong> into a 1024-dimensional vector using Cohere's multilingual model → stored in <strong>Vector DB</strong></li> <li><strong>Indexed</strong> for full-text keyword search → stored in <strong>SQL DB FTS5</strong></li> </ul> <div class="mermaid">
+flowchart LR
+ A[ Uploaded File] --> B[Text Extraction]
+ B --> C[Chunking Engine]
+ C -->|"Chunk 1, Chunk 2, ..."| D[Cohere Embedding<br/>1024-dim vectors]
+ C -->|"Chunk 1, Chunk 2, ..."| E[FTS5 Indexing<br/>BM25 keywords]
+ D --> F[(Vector DB)]
+ E --> G[(SQL DB)]
+
+ style A fill:#3B82F6,color:#fff
+ style D fill:#8B5CF6,color:#fff
+ style E fill:#F59E0B,color:#fff
+ style F fill:#8B5CF6,color:#fff
+ style G fill:#F59E0B,color:#fff
+ </div> <table> <thead> <tr><th>Setting</th><th>Default</th><th>Range</th><th>Description</th></tr> </thead> <tbody> <tr> <td><strong>Chunk Size</strong></td> <td>500 characters</td> <td>100 – 10,000</td> <td>Number of characters per chunk. Larger chunks provide more context but may reduce precision.</td> </tr> <tr> <td><strong>Chunk Overlap</strong></td> <td>50 characters</td> <td>0 – 5,000</td> <td>Characters shared between consecutive chunks to prevent information loss at boundaries.</td> </tr> </tbody> </table> <div class="callout callout-tip"> <div class="callout-title">Tip: Chunk Settings</div> <p> Chunk size and overlap are configured in <a href="settings.html">Settings</a>.
+ Changing these values only affects <strong>newly uploaded</strong> documents.
+ Use <strong>Re-index</strong> to re-chunk existing documents with new settings.
+ </p> </div> <!-- ============================================ --> <h2 id="ingest-urls">Ingest URLs</h2> <p> Scrape and ingest content from web pages. BABEH automatically extracts the main article content,
+ strips navigation/ads, and processes it the same way as uploaded files.
+ </p> <h3 id="how-to-ingest">How to Ingest URLs</h3> <ol class="steps"> <li>Navigate to <strong>Knowledge Base</strong> from the sidebar.</li> <li>In the <strong>Ingest URLs</strong> card, paste one or more URLs into the text area — <strong>one URL per line</strong>.</li> <li>Click <strong>Ingest</strong>. Each URL is processed sequentially with a progress bar.</li> <li>Successfully ingested pages appear in the Document Library with type "URL".</li> </ol> <div class="screenshot-wrapper"> <div class="screenshot-placeholder"> <div class="ph-icon"></div> <img src="../images/upload-link-babeh.png" alt="URL ingestion" /><div class="ph-label">Screenshot: Ingest URLs card with multi-line textarea and progress bar</div> </div> </div> <div class="callout callout-info"> <div class="callout-title">Web Scraping Engine</div> <p> BABEH uses <strong>trafilatura</strong> as the primary content extractor with a <strong>BeautifulSoup4</strong> fallback. It intelligently extracts the main article content while filtering out navigation bars,
+ footers, ads, and other boilerplate.
+ </p> </div> <!-- ============================================ --> <h2 id="document-library">Document Library</h2> <p> The Document Library is a searchable, sortable table of all uploaded files and ingested URLs.
+ </p> <div class="screenshot-wrapper"> <div class="screenshot-placeholder"> <div class="ph-icon"></div> <img src="../images/filelibrary-babeh.png" alt="Document Library" /> <div class="ph-label">Screenshot: Document Library table with search, filters, and action buttons</div> </div> </div> <h3 id="library-fields">Table Fields</h3> <table> <thead> <tr><th>Column</th><th>Description</th></tr> </thead> <tbody> <tr><td><strong>Filename</strong></td><td>Original filename or URL title</td></tr> <tr><td><strong>Type</strong></td><td>File type badge: <code>PDF</code>, <code>TXT</code>, or <code>URL</code></td></tr> <tr><td><strong>Chunks</strong></td><td>Number of text chunks created from this document</td></tr> <tr><td><strong>Size</strong></td><td>Original file size (in KB or MB)</td></tr> <tr><td><strong>Upload Date</strong></td><td>When the document was uploaded or ingested</td></tr> <tr><td><strong>Actions</strong></td><td>Edit, Re-index, and Delete buttons</td></tr> </tbody> </table> <h3 id="library-controls">Filtering & Sorting</h3> <ul> <li><strong>Search</strong> — Type in the search box to filter documents by filename.</li> <li><strong>Type filter</strong> — Switch between <strong>All</strong>, <strong>Files</strong>, or <strong>URLs</strong>.</li> <li><strong>Sort</strong> — Click column headers to sort by chunks, size, or date.</li> <li><strong>Pagination</strong> — Choose 10, 25, or 50 items per page.</li> </ul> <!-- ============================================ --> <h2 id="document-actions">Document Actions</h2> <h3 id="edit-document"> Edit</h3> <p>Opens the document in an edit modal where you can:</p> <ul> <li><strong>Rename</strong> the document (filename field)</li> <li><strong>Edit content</strong> directly in a text editor — changes trigger automatic re-chunking and re-embedding</li> <li>Use <strong>KBC AI Improvement</strong> to get AI-powered rewriting suggestions (see below)</li> </ul> <h3 id="reindex-document"> Re-index</h3> <p> Re-processes the document using the <strong>current</strong> chunk settings. Useful when you've changed
+ chunk size or overlap in Settings and want existing documents to use the new values.
+ </p> <ul> <li><strong>Single document</strong> — Click the Re-index button on a specific row.</li> <li><strong>All documents</strong> — Use the "Re-index All" button at the top of the library. Progress streams via real-time SSE updates.</li> </ul> <div class="callout callout-warning"> <div class="callout-title">Stale Chunk Warning</div> <p> When your current chunk settings differ from those used when a document was ingested,
+ a <strong>yellow warning banner</strong> appears suggesting you re-index. This ensures all documents
+ use consistent chunking for optimal search quality.
+ </p> </div> <h3 id="delete-document"> Delete</h3> <p> Permanently removes the document from all stores:
+ </p> <ul> <li>Chunks removed from <strong>Vector DB</strong> (vector embeddings)</li> <li>Chunks removed from <strong>SQL DB FTS5</strong> (keyword index)</li> <li>Original file removed from <strong>disk</strong></li> <li>Metadata removed from <strong>SQL DB documents table</strong></li> </ul> <div class="callout callout-danger"> <div class="callout-title">Irreversible Action</div> <p>Deleting a document cannot be undone. You will need to re-upload the original file if needed.</p> </div> <!-- ============================================ --> <h2 id="kbc-improvement">KBC Content Improvement (AI)</h2> <p> The <strong>KBC Content Improvement</strong> feature uses AI to analyze your document content and
+ suggest rewrites that improve search retrieval quality.
+ </p> <h3 id="kbc-how">How to Use</h3> <ol class="steps"> <li>Open a document via the <strong>Edit</strong> button.</li> <li>In the edit modal, find the <strong>KBC Improvement</strong> panel.</li> <li>Click <strong>"Generate Suggestion"</strong> — the AI analyzes the content and proposes improvements.</li> <li>Review the suggestion. Click <strong>"Use Suggestion"</strong> to apply it to the editor, or <strong>"Use &amp; Save"</strong> to apply and save immediately.</li> </ol> <div class="mermaid">
+sequenceDiagram
+ actor User
+ participant Editor as Edit Modal
+ participant LLM as AI (LLM)
+ participant DB as Database
+
+ User->>Editor: Click "Generate Suggestion"
+ Editor->>LLM: Send current content<br/>(temperature: 0.3)
+ LLM-->>Editor: Return improved content
+ Editor->>User: Display suggestion preview
+ User->>Editor: Click "Use & Save"
+ Editor->>DB: Save updated content
+ DB-->>Editor: Re-chunk + Re-embed
+ Editor->>User: Yes Document updated
+ </div> <div class="callout callout-info"> <div class="callout-title">How It Helps</div> <p> The AI rewrites content to be more structured, keyword-rich, and retrieval-friendly —
+ meaning your search engine will find more relevant results. It uses a low temperature (0.3)
+ to stay faithful to the original content while improving clarity.
+ </p> </div> <!-- ============================================ --> <h2 id="collection-info">Collection Info</h2> <p> Below the Document Library, a <strong>Collection Info</strong> section shows VectorDB statistics:
+ </p> <ul> <li><strong>Total vectors</strong> — Number of embeddings stored in Vector DB</li> <li><strong>Collection name</strong> — The Vector DB collection identifier</li> <li><strong>Embedding model</strong> — <code>cohere.embed-multilingual-v3</code> (1024 dimensions)</li> </ul> <div id="page-nav-root"></div> </main> <aside class="doc-toc" id="toc-root"></aside> </div> <script src="../js/docs.js"></script>
+</body>
+</html>

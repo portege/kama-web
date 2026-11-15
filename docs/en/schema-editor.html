@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head> <meta charset="UTF-8" /> <meta name="viewport" content="width=device-width, initial-scale=1.0" /> <title>Schema Editor — BABEH Docs</title> <link rel="stylesheet" href="../css/docs.css" />
+</head>
+<body> <button class="hamburger" id="hamburgerBtn">Menu</button> <div id="sidebar-root"></div> <div class="doc-layout"> <main class="doc-main"> <div id="breadcrumb-root"></div> <h1>Schema Editor</h1> <p class="subtitle"> Customize database fields at runtime — add, rename, or remove columns with automatic FTS and VectorDB rebuild.
+ </p> <div class="callout callout-danger"> <div class="callout-title">Restricted Access</div> <p> The Schema Editor is available only to <span class="badge badge-role-superadmin">superadmin</span> users.
+ Schema changes affect the entire system's data structure.
+ </p> </div> <!-- ============================================ --> <h2 id="overview">Overview</h2> <p> The Schema Editor allows you to modify the database structure of the <strong>Pricing Database</strong> and <strong>Product Specifications</strong> at runtime — without writing SQL or restarting the server.
+ All changes are versioned and auditable.
+ </p> <div class="mermaid">
+flowchart TB
+ A[Schema Change<br/>Add / Rename / Remove Field] --> B{Change Type}
+ B -->|Add Field| C[ALTER TABLE<br/>Add Column]
+ B -->|Rename Field| D[Create New Table<br/>Copy Data<br/>Drop Old Table]
+ B -->|Remove Field| E[Create New Table<br/>Copy Data<br/>Drop Old Table]
+ C --> F[Rebuild FTS5 Index]
+ D --> F
+ E --> F
+ F --> G[Rebuild VectorDB Embeddings]
+ G --> H[Yes Schema Updated<br/>Version Incremented]
+
+ style A fill:#3B82F6,color:#fff
+ style F fill:#F59E0B,color:#fff
+ style G fill:#8B5CF6,color:#fff
+ style H fill:#22C55E,color:#fff
+ </div> <!-- ============================================ --> <h2 id="accessing">Accessing the Schema Editor</h2> <ol class="steps"> <li>Navigate to <strong>Pricing Database</strong> or <strong>Product Specifications</strong>.</li> <li>Click the <strong>"Schema Editor"</strong> button at the top of the page (visible only to superadmin).</li> <li>A modal opens showing the current schema with all fields listed.</li> </ol> <div class="screenshot-wrapper"> <img src="" alt="Schema Editor" /> <div class="screenshot-placeholder"> <div class="ph-icon"></div> <div class="ph-label">Screenshot: Schema Editor modal with drag-sortable field list and inline badges</div> </div> </div> <!-- ============================================ --> <h2 id="field-properties">Field Properties</h2> <p>Each field in the schema has the following configurable properties:</p> <table> <thead> <tr><th>Property</th><th>Type</th><th>Description</th></tr> </thead> <tbody> <tr><td><code>name</code></td><td>Text</td><td>Column name in the database (snake_case)</td></tr> <tr><td><code>display_label</code></td><td>Text</td><td>Human-readable label shown in the UI</td></tr> <tr><td><code>data_type</code></td><td>Enum</td><td><code>text</code>, <code>real</code>, <code>integer</code>, or <code>boolean</code></td></tr> <tr><td><code>is_required</code></td><td>Boolean</td><td>Whether the field must be filled when adding records</td></tr> <tr><td><code>default_value</code></td><td>Text</td><td>Default value for new records</td></tr> <tr><td><code>format_hint</code></td><td>Enum</td><td>UI display format: <code>currency</code>, <code>badge</code>, <code>textarea</code>, <code>boolean_badge</code></td></tr> <tr><td><code>is_fts_indexed</code></td><td>Boolean</td><td>Whether this field is included in FTS5 full-text search</td></tr> <tr><td><code>fts_weight</code></td><td>Real</td><td>FTS5 ranking weight (higher = more important in search)</td></tr> <tr><td><code>is_vectordb_field</code></td><td>Boolean</td><td>Whether this field is included in VectorDB embeddings</td></tr> <tr><td><code>vectordb_template</code></td><td>Text</td><td>Template string for how this field appears in VectorDB text</td></tr> <tr><td><code>sort_order</code></td><td>Integer</td><td>Display order in the UI (drag to reorder)</td></tr> </tbody> </table> <!-- ============================================ --> <h2 id="operations">Schema Operations</h2> <h3 id="add-field">Add Field</h3> <ol class="steps"> <li>Click <strong>"+ Add Field"</strong> in the Schema Editor.</li> <li>Enter the field name (snake_case), display label, data type, and other properties.</li> <li>Configure FTS settings (indexed? weight?) and VectorDB settings (included? template?).</li> <li>Click <strong>Save</strong>. The column is added via <code>ALTER TABLE</code>, and FTS/VectorDB rebuild is queued.</li> </ol> <div class="callout callout-info"> <div class="callout-title">New Field Values</div> <p> Existing records will have <code>NULL</code> (or the default value you specify) for the new field.
+ You can bulk-update records via import/export if needed.
+ </p> </div> <h3 id="edit-field">Edit Field</h3> <p> Click the <strong> Edit</strong> button next to any field. You can change the display label,
+ required status, default value, format hint, FTS weight, VectorDB template, and other metadata.
+ </p> <div class="callout callout-warning"> <div class="callout-title">Data Type Changes</div> <p>You cannot change a field's data type after creation. To change the type, remove the field and re-add it (data in that column will be lost).</p> </div> <h3 id="rename-field">Rename Field</h3> <ol class="steps"> <li>Click <strong>"Rename"</strong> next to the field.</li> <li>Enter the new column name.</li> <li>The system creates a new table structure, copies all data, and drops the old table. FTS and VectorDB are rebuilt.</li> </ol> <h3 id="remove-field">Remove Field</h3> <div class="callout callout-danger"> <div class="callout-title">Data Loss Warning</div> <p> Removing a field permanently deletes the column and all its data from every record.
+ This cannot be undone. Export your data first if you need to preserve the values.
+ </p> </div> <!-- ============================================ --> <h2 id="fts-vectordb">FTS & VectorDB Configuration</h2> <h3 id="fts-weights">FTS Weights</h3> <p> Each text field can be included in FTS5 search with a configurable <strong>weight</strong>.
+ Higher weights make matches in that field rank higher in search results.
+ </p> <table> <thead> <tr><th>Weight</th><th>Meaning</th><th>Example</th></tr> </thead> <tbody> <tr><td><strong>2.0</strong></td><td>Very high priority</td><td><code>product_name</code></td></tr> <tr><td><strong>1.5</strong></td><td>High priority</td><td><code>category</code></td></tr> <tr><td><strong>1.0</strong></td><td>Normal priority</td><td><code>description</code>, <code>sku</code></td></tr> <tr><td><strong>0.5</strong></td><td>Low priority</td><td><code>currency</code>, <code>unit</code></td></tr> </tbody> </table> <h3 id="vectordb-templates">VectorDB Templates</h3> <p> The VectorDB template defines how a field's value is represented in the text that gets embedded.
+ Use <code>{value}</code> as a placeholder.
+ </p> <p>Example templates:</p> <pre><code>Product: {value}
+Category: {value}
+Price is {value} IDR</code></pre> <!-- ============================================ --> <h2 id="history">Schema History & Diff</h2> <h3 id="version-history">Version History</h3> <p> Every schema change creates a new <strong>version</strong>. The History tab shows a timeline
+ of all changes with timestamps and descriptions.
+ </p> <h3 id="schema-diff">Schema Diff</h3> <p> Compare any two versions side-by-side. The diff shows:
+ </p> <ul> <li><strong>Added fields</strong> (highlighted in green)</li> <li><strong>Removed fields</strong> (highlighted in red)</li> <li><strong>Changed properties</strong> (highlighted in yellow)</li> </ul> <div class="screenshot-wrapper"> <img src="" alt="Schema diff" /> <div class="screenshot-placeholder"> <div class="ph-icon"></div> <div class="ph-label">Screenshot: Schema history timeline and side-by-side diff viewer</div> </div> </div> <!-- ============================================ --> <h2 id="rebuild">Rebuild Status</h2> <p> After schema changes, FTS and VectorDB indexes need to be rebuilt. This happens automatically
+ but you can also trigger a manual rebuild.
+ </p> <ul> <li><strong>Auto-rebuild</strong> — Queued automatically after add/rename/remove field operations</li> <li><strong>Manual rebuild</strong> — Click "Rebuild" to trigger FTS and/or VectorDB rebuild manually</li> <li><strong>Status polling</strong> — A live indicator shows rebuild progress (processing, complete, or failed)</li> </ul> <div class="mermaid">
+sequenceDiagram
+ actor Admin as Superadmin
+ participant SE as Schema Editor
+ participant DB as SQLite
+ participant FTS as FTS5 Index
+ participant VDB as ChromaDB
+
+ Admin->>SE: Add new field
+ SE->>DB: ALTER TABLE ADD COLUMN
+ SE->>FTS: Queue FTS rebuild
+ SE->>VDB: Queue VectorDB rebuild
+ FTS-->>SE: Rebuild progress (0%...100%)
+ VDB-->>SE: Rebuild progress (0%...100%)
+ SE-->>Admin: Yes Schema v2 ready
+ </div> <div id="page-nav-root"></div> </main> <aside class="doc-toc" id="toc-root"></aside> </div> <script src="../js/docs.js"></script>
+</body>
+</html>

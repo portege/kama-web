@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="id">
+<head> <meta charset="UTF-8" /> <meta name="viewport" content="width=device-width, initial-scale=1.0" /> <title>Widget Tertanam — BABEH Docs</title> <link rel="stylesheet" href="../css/docs.css" />
+</head>
+<body> <button class="hamburger" id="hamburgerBtn">Menu</button> <div id="sidebar-root"></div> <div class="doc-layout"> <main class="doc-main"> <div id="breadcrumb-root"></div> <div class="callout callout-warning"> <div class="callout-title">Halaman ini sedang dalam proses penerjemahan</div> <p> Konten di bawah ini masih dalam Bahasa Inggris dan sedang diterjemahkan ke Bahasa Indonesia.
+ <a href="../en/widget.html">Read in English →</a> </p> </div> <h1>Widget Tertanam</h1> <p class="subtitle"> Pasang widget pencarian BABEH di halaman web manapun — panel mengambang yang
+ memberikan pencarian AI tanpa dependensi tambahan.
+ </p> <h2 id="installation">Instalasi</h2> <p>Dua cara pemasangan: Script + JS Init, atau Auto-Init via data attributes.</p> <h3 id="method-script">Metode A: Script + JS Init</h3> <div class="code-block"> <div class="code-header">HTML</div>
+<pre><code>&lt;div id="kbaas-widget"&gt;&lt;/div&gt;
+&lt;script src="js/kbaas-widget.js"&gt;&lt;/script&gt;
+&lt;script&gt;
+ KBaaSWidget.init({
+ apiUrl: 'https://domain-anda.com/api',
+ apiKey: 'api-key-anda'
+ });
+&lt;/script&gt;</code></pre> </div> <h3 id="method-data">Metode B: Auto-Init via Data Attributes</h3> <div class="code-block"> <div class="code-header">HTML</div>
+<pre><code>&lt;div id="kbaas-widget"
+ data-api-url="https://domain-anda.com/api"
+ data-api-key="api-key-anda"&gt;
+&lt;/div&gt;
+&lt;script src="js/kbaas-widget.js"&gt;&lt;/script&gt;</code></pre> </div> <h2 id="config-options">Opsi Konfigurasi</h2> <table> <thead><tr><th>Opsi</th><th>Deskripsi</th></tr></thead> <tbody> <tr><td><code>apiUrl</code></td><td>URL API backend untuk pencarian</td></tr> <tr><td><code>apiKey</code></td><td>API key (dikirim via header X-API-Key)</td></tr> <tr><td><code>containerId</code></td><td>ID elemen HTML untuk mount widget</td></tr> <tr><td><code>apiBaseUrl</code></td><td>URL dasar untuk health check</td></tr> </tbody> </table> <h2 id="api-methods">Metode API</h2> <p><code>init()</code>, <code>search()</code>, <code>clear()</code>, <code>configure()</code>, <code>getConfig()</code>, <code>isInitialized()</code></p> <h2 id="theme-dark-mode">Tema &amp; Dark Mode</h2> <p>Otomatis mengikuti preferensi sistem, atau toggle manual Light/Dark.</p> <h2 id="responsive">Responsif</h2> <p>4 breakpoint: &gt;768px, ≤768px, ≤480px, ≤360px.</p> <h2 id="keyboard-shortcuts">Shortcut Keyboard</h2> <p><kbd>Ctrl</kbd> + <kbd>Enter</kbd> — submit pencarian dari textarea.</p> <div id="page-nav-root"></div> </main> <aside class="doc-toc" id="toc-root"></aside> </div> <script src="../js/docs.js"></script>
+</body>
+</html>

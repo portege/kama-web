@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head> <meta charset="UTF-8" /> <meta name="viewport" content="width=device-width, initial-scale=1.0" /> <title>Widget Integration — BABEH Docs</title> <link rel="stylesheet" href="../css/docs.css" />
+</head>
+<body> <button class="hamburger" id="hamburgerBtn">Menu</button> <div id="sidebar-root"></div> <div class="doc-layout"> <main class="doc-main"> <div id="breadcrumb-root"></div> <h1>Widget Integration</h1> <p class="subtitle"> Embed the BABEH search widget on any webpage — a floating, self-contained panel
+ that gives your visitors AI-powered search with zero dependencies.
+ </p> <!-- ============================================ --> <h2 id="overview">Overview</h2> <p> The KBaaS widget is a self-contained IIFE (Immediately Invoked Function Expression)
+ that renders a fixed-position floating panel at the bottom-center of any webpage.
+ It uses <strong>Shadow DOM</strong> for full CSS isolation, so it won't conflict
+ with your site's styles.
+ </p> <div class="mermaid">
+flowchart LR
+ A[Your Website] -->|Load script| B[kbaas-widget.js]
+ B -->|Shadow DOM| C[Widget Panel]
+ C -->|API calls| D[BABEH Backend]
+ D -->|SSE stream| C
+ C -->|Render| E[AI Response + Sources]
+
+ style B fill:#3B82F6,color:#fff
+ style C fill:#8B5CF6,color:#fff
+ style D fill:#10B981,color:#fff
+ </div> <div class="callout callout-info"> <div class="callout-title">Zero Dependencies</div> <p> The widget is fully self-contained (~1250 lines). The only runtime dependency is
+ <strong>marked.js</strong> (Markdown renderer), which is lazy-loaded from jsDelivr CDN
+ on the first search.
+ </p> </div> <!-- ============================================ --> <h2 id="installation">Installation</h2> <p>There are two ways to install the widget — both use a simple <code>&lt;script&gt;</code> tag.</p> <h3 id="method-script">Method A: Script + JS Init</h3> <p>Add the container, load the script, then initialize with options:</p> <div class="code-block"> <div class="code-header">HTML</div>
+<pre><code>&lt;!-- 1. Container --&gt;
+&lt;div id="kbaas-widget"&gt;&lt;/div&gt;
+
+&lt;!-- 2. Load widget --&gt;
+&lt;script src="js/kbaas-widget.js"&gt;&lt;/script&gt;
+
+&lt;!-- 3. Initialize --&gt;
+&lt;script&gt;
+ KBaaSWidget.init({
+ apiUrl: 'https://your-domain.com/api',
+ apiKey: 'your-api-key',
+ apiBaseUrl: 'https://your-domain.com'
+ });
+&lt;/script&gt;</code></pre> </div> <h3 id="method-data">Method B: Auto-Init via Data Attributes</h3> <p>No JavaScript required — the widget reads configuration from data attributes on the container element:</p> <div class="code-block"> <div class="code-header">HTML</div>
+<pre><code>&lt;div id="kbaas-widget"
+ data-api-url="https://your-domain.com/api"
+ data-api-key="your-api-key"
+ data-api-base-url="https://your-domain.com"&gt;
+&lt;/div&gt;
+
+&lt;script src="js/kbaas-widget.js"&gt;&lt;/script&gt;</code></pre> </div> <div class="callout callout-tip"> <div class="callout-title">How Auto-Init Works</div> <p> On <code>DOMContentLoaded</code>, the widget checks if a <code>#kbaas-widget</code> element exists and hasn't been initialized yet. If found, it reads the
+ <code>data-api-url</code>, <code>data-api-key</code>, and <code>data-api-base-url</code> attributes, then calls <code>KBaaSWidget.init()</code> automatically.
+ </p> </div> <!-- ============================================ --> <h2 id="config-options">Configuration Options</h2> <p>All options are optional — defaults are provided:</p> <table> <thead> <tr><th>Option</th><th>Type</th><th>Default</th><th>Description</th></tr> </thead> <tbody> <tr> <td><code>apiUrl</code></td> <td><code>string</code></td> <td><code>https://dev-api.babeh.com/api</code></td> <td>Backend API base URL for search queries</td> </tr> <tr> <td><code>apiKey</code></td> <td><code>string</code></td> <td><code>xxx</code></td> <td>API key sent via <code>X-API-Key</code> header</td> </tr> <tr> <td><code>containerId</code></td> <td><code>string</code></td> <td><code>kbaas-widget</code></td> <td>ID of the HTML element to mount the widget into</td> </tr> <tr> <td><code>apiBaseUrl</code></td> <td><code>string</code></td> <td><code>https://dev-api.babeh.com</code></td> <td>Base URL for the <code>/health</code> endpoint check</td> </tr> </tbody> </table> <div class="callout callout-warning"> <div class="callout-title">Data Attribute Defaults Differ</div> <p> When using auto-init (Method B), the fallback defaults are
+ <code>http://localhost:8000/api</code> and <code>http://localhost:8000</code> instead of the production URLs. Always set your data attributes explicitly in production.
+ </p> </div> <!-- ============================================ --> <h2 id="api-methods">API Methods</h2> <p>The widget exposes a global <code>KBaaSWidget</code> object with the following methods:</p> <table> <thead> <tr><th>Method</th><th>Signature</th><th>Description</th></tr> </thead> <tbody> <tr> <td><code>init(options)</code></td> <td><code>init({ apiUrl, apiKey, containerId, apiBaseUrl })</code></td> <td>Mount widget into Shadow DOM, inject styles/HTML, set up listeners, run health check. Warns if called twice.</td> </tr> <tr> <td><code>search(query)</code></td> <td><code>search(queryString)</code></td> <td>Programmatically set the textarea value and trigger a search. Requires <code>init()</code> first.</td> </tr> <tr> <td><code>clear()</code></td> <td><code>clear()</code></td> <td>Empty the textarea, hide results and LLM panels, clear all content.</td> </tr> <tr> <td><code>configure(opts)</code></td> <td><code>configure({ apiUrl, apiKey, ... })</code></td> <td>Merge new options into config at runtime. Does <strong>not</strong> reinitialize the API client.</td> </tr> <tr> <td><code>getConfig()</code></td> <td><code>getConfig()</code></td> <td>Returns a shallow copy of the current configuration object.</td> </tr> <tr> <td><code>isInitialized()</code></td> <td><code>isInitialized()</code></td> <td>Returns <code>true</code> if the widget has been initialized.</td> </tr> </tbody> </table> <!-- ============================================ --> <h2 id="shadow-dom">Shadow DOM Isolation</h2> <p> The widget uses <code>attachShadow({ mode: 'open' })</code> for full CSS isolation.
+ This means:
+ </p> <ul> <li><strong>Widget CSS never leaks</strong> — all styles are injected inside the shadow root as a <code>&lt;style&gt;</code> element</li> <li><strong>Host CSS never affects the widget</strong> — your site's styles won't break the widget</li> <li><strong>DOM queries are scoped</strong> — all internal <code>querySelector</code> calls target the shadow root</li> </ul> <div class="callout callout-info"> <div class="callout-title">Global Exceptions</div> <p>Two items are injected into the global <code>&lt;head&gt;</code>:</p> <ul> <li><strong>Google Fonts link</strong> for "Boogaloo" font (guarded by ID to prevent duplicates)</li> <li><strong>marked.js script</strong> from jsDelivr CDN (lazy-loaded on first search)</li> </ul> </div> <!-- ============================================ --> <h2 id="theme-dark-mode">Theme &amp; Dark Mode</h2> <p>The widget supports three layers of theme control:</p> <div class="steps"> <div class="step"> <h4>System Auto-Detect</h4> <p> The widget uses <code>@media (prefers-color-scheme: dark)</code> inside the shadow CSS
+ to automatically match the user's OS theme.
+ </p> </div> <div class="step"> <h4>Manual Toggle</h4> <p> A "Light / Dark" pill button in the title bar lets users override the system preference.
+ This adds <code>.kbaas-widget--light</code> or <code>.kbaas-widget--dark</code> classes.
+ </p> </div> <div class="step"> <h4>JS Detection on Init</h4> <p> On initialization, the widget detects the current system preference and sets the
+ appropriate class before first render.
+ </p> </div> </div> <h3 id="css-variables">CSS Custom Properties</h3> <p>The widget uses CSS custom properties that automatically change with the theme:</p> <table> <thead> <tr><th>Variable</th><th>Light</th><th>Dark</th></tr> </thead> <tbody> <tr><td><code>--kbaas-bg-primary</code></td><td><code>#ffffff</code></td><td><code>#1a1a1a</code></td></tr> <tr><td><code>--kbaas-bg-secondary</code></td><td><code>#f8f9fa</code></td><td><code>#2d2d2d</code></td></tr> <tr><td><code>--kbaas-text-primary</code></td><td><code>#212529</code></td><td><code>#e0e0e0</code></td></tr> <tr><td><code>--kbaas-text-secondary</code></td><td><code>#6c757d</code></td><td><code>#a0a0a0</code></td></tr> <tr><td><code>--kbaas-border-color</code></td><td><code>#dee2e6</code></td><td><code>#404040</code></td></tr> <tr><td><code>--kbaas-accent-color</code></td><td><code>#0d6efd</code></td><td><code>#4a9eff</code></td></tr> <tr><td><code>--kbaas-shadow</code></td><td><code>0 2px 8px rgba(0,0,0,0.1)</code></td><td><code>0 2px 8px rgba(0,0,0,0.4)</code></td></tr> </tbody> </table> <div class="screenshot-wrapper"> <img src="" alt="Widget light and dark modes" /> <div class="screenshot-placeholder"> <div class="ph-icon"></div> <div class="ph-label">Screenshot: Widget in light mode (left) and dark mode (right)</div> </div> </div> <!-- ============================================ --> <h2 id="responsive">Responsive Behavior</h2> <p>The widget adapts to four viewport widths:</p> <table> <thead> <tr><th>Breakpoint</th><th>Widget Width</th><th>Position</th><th>Notes</th></tr> </thead> <tbody> <tr> <td>&gt; 768px</td> <td><code>520px</code> fixed</td> <td>Fixed bottom-center</td> <td>Default</td> </tr> <tr> <td>≤ 768px</td> <td><code>calc(100vw - 32px)</code></td> <td>Fixed bottom-left</td> <td>Max 520px</td> </tr> <tr> <td>≤ 480px</td> <td><code>calc(100vw - 20px)</code></td> <td>Fixed bottom-left</td> <td>Smaller fonts (14px), tighter padding</td> </tr> <tr> <td>≤ 360px</td> <td><code>calc(100vw - 16px)</code></td> <td>Fixed bottom-left</td> <td>Even smaller fonts (13px), minimal padding</td> </tr> </tbody> </table> <p> The widget body uses <code>max-height: 80vh</code> with overflow scrolling when expanded
+ (85vh on ≤ 480px).
+ </p> <div class="screenshot-wrapper"> <img src="" alt="Widget on mobile" /> <div class="screenshot-placeholder"> <div class="ph-icon"></div> <div class="ph-label">Screenshot: Widget on mobile viewport (≤ 480px)</div> </div> </div> <!-- ============================================ --> <h2 id="keyboard-shortcuts">Keyboard Shortcuts</h2> <table> <thead> <tr><th>Shortcut</th><th>Context</th><th>Action</th></tr> </thead> <tbody> <tr> <td><kbd>Ctrl</kbd> + <kbd>Enter</kbd></td> <td>Focus in query textarea</td> <td>Submit the search query</td> </tr> </tbody> </table> <!-- ============================================ --> <h2 id="widget-ui">Widget UI Structure</h2> <p>The widget renders as a floating panel with these parts:</p> <div class="mermaid">
+flowchart TD
+ A[Widget Container - z-index 9999] --> B[Title Bar]
+ A --> C[Collapsible Body]
+ B --> B1["'Coba Tanya BABEH!' text"]
+ B --> B2[Theme toggle pill]
+ B --> B3[Collapse chevron]
+ C --> D[LLM Response Section]
+ C --> E[Source Results]
+ C --> F[Query Textarea]
+ C --> G["'Ask!' Button"]
+ C --> H["'Powered by Babeh' footer"]
+ D --> D1[Markdown-rendered AI answer]
+ E --> E1[Collapsible source cards grid]
+
+ style A fill:#3B82F6,color:#fff
+ style C fill:#8B5CF6,color:#fff
+ </div> <ul> <li><strong>Title bar</strong> — always visible; click to expand/collapse. Displays "Coba Tanya BABEH!" in Boogaloo font with gradient text.</li> <li><strong>LLM Response</strong> — markdown-rendered AI answer with a blue left border, scrollable (max 400px), blinking cursor during streaming.</li> <li><strong>Source Results</strong> — collapsible section with chevron toggle; cited sources as a card grid with filename and color-coded relevance score badges.</li> <li><strong>Query textarea</strong> — multi-line input with placeholder text.</li> <li><strong>"Ask!" button</strong> — disables and shows " Searching..." during queries.</li> </ul> <!-- ============================================ --> <h2 id="score-colors">Relevance Score Colors</h2> <p>Source cards display color-coded relevance badges:</p> <table> <thead> <tr><th>Score Range</th><th>Color</th><th>Meaning</th></tr> </thead> <tbody> <tr><td>≥ 0.90</td><td><span style="color:#10b981"> Green</span></td><td>Highly relevant</td></tr> <tr><td>≥ 0.80</td><td><span style="color:#3b82f6"> Blue</span></td><td>Very relevant</td></tr> <tr><td>≥ 0.70</td><td><span style="color:#f59e0b"> Orange</span></td><td>Relevant</td></tr> <tr><td>&lt; 0.70</td><td><span style="color:#6b7280"> Gray</span></td><td>Marginally relevant</td></tr> </tbody> </table> <!-- ============================================ --> <h2 id="streaming-protocol">Streaming Protocol (SSE)</h2> <p>The widget uses Server-Sent Events for real-time responses:</p> <div class="mermaid">
+sequenceDiagram
+ participant W as Widget
+ participant S as Backend
+
+ W->>S: POST /search/stream
+ S-->>W: event: search_results<br/>data: [{id, content, score, ...}]
+ loop Token by token
+ S-->>W: event: llm_chunk<br/>data: "partial text..."
+ end
+ S-->>W: event: cited_sources<br/>data: [{filename, score, ...}]
+ S-->>W: [stream complete]
+ W->>W: Final render + citations
+ </div> <table> <thead> <tr><th>SSE Event</th><th>Payload</th><th>Behavior</th></tr> </thead> <tbody> <tr> <td><code>search_results</code></td> <td>Array of search result objects</td> <td>Stores results; rendering deferred until stream completes</td> </tr> <tr> <td><code>llm_chunk</code></td> <td>String fragment of LLM response</td> <td>Appended to running text; markdown-rendered with blinking cursor</td> </tr> <tr> <td><code>cited_sources</code></td> <td>Array of source objects</td> <td>Deduplicated by filename, sorted by score, rendered as cards</td> </tr> </tbody> </table> <!-- ============================================ --> <h2 id="session-security">Session &amp; Security</h2> <ul> <li><strong>API Key</strong> — every request includes <code>X-API-Key</code> header</li> <li><strong>Session ID</strong> — a UUID v4 is generated per session and stored in <code>sessionStorage</code> under key <code>kbaas_session_id</code>; sent via <code>X-Session-ID</code> header</li> <li><strong>HTML Escaping</strong> — filenames and user input are escaped before rendering to prevent XSS</li> <li><strong>External Links</strong> — all source URL links include <code>rel="noopener noreferrer"</code> and <code>target="_blank"</code></li> </ul> <div class="callout callout-warning"> <div class="callout-title">No Client-Side Rate Limiting</div> <p> The widget does not implement client-side rate limiting. Rate limiting
+ should be enforced on the server side.
+ </p> </div> <!-- ============================================ --> <h2 id="framework-examples">Framework Integration Examples</h2> <p>The widget works with any framework. Load the script globally, then call <code>init()</code> in the appropriate lifecycle hook.</p> <h3 id="react-example">React</h3> <div class="code-block"> <div class="code-header">React (JSX)</div>
+<pre><code>import { useEffect } from 'react';
+
+export default function App() {
+ useEffect(() =&gt; {
+ KBaaSWidget.init({
+ apiUrl: 'https://your-domain.com/api',
+ apiKey: 'your-api-key',
+ apiBaseUrl: 'https://your-domain.com'
+ });
+ }, []);
+
+ return &lt;div id="kbaas-widget"&gt;&lt;/div&gt;;
+}</code></pre> </div> <h3 id="vue-example">Vue</h3> <div class="code-block"> <div class="code-header">Vue (SFC)</div>
+<pre><code>&lt;template&gt;
+ &lt;div id="kbaas-widget"&gt;&lt;/div&gt;
+&lt;/template&gt;
+
+&lt;script&gt;
+export default {
+ mounted() {
+ KBaaSWidget.init({
+ apiUrl: 'https://your-domain.com/api',
+ apiKey: 'your-api-key',
+ apiBaseUrl: 'https://your-domain.com'
+ });
+ }
+};
+&lt;/script&gt;</code></pre> </div> <h3 id="angular-example">Angular</h3> <div class="code-block"> <div class="code-header">Angular (TypeScript)</div>
+<pre><code>declare var KBaaSWidget: any;
+
+@Component({
+ selector: 'app-root',
+ template: '&lt;div id="kbaas-widget"&gt;&lt;/div&gt;'
+})
+export class AppComponent implements OnInit {
+ ngOnInit() {
+ KBaaSWidget.init({
+ apiUrl: 'https://your-domain.com/api',
+ apiKey: 'your-api-key',
+ apiBaseUrl: 'https://your-domain.com'
+ });
+ }
+}</code></pre> </div> <!-- ============================================ --> <h2 id="toast-notifications">Toast Notifications</h2> <p> The widget displays toast notifications for connection status and errors.
+ Toasts appear at the top-right of the viewport and auto-dismiss after 3 seconds.
+ </p> <table> <thead> <tr><th>Type</th><th>Color</th><th>Example</th></tr> </thead> <tbody> <tr><td>Success</td><td>Green</td><td>Health check passed</td></tr> <tr><td>Error</td><td>Red</td><td>API connection failed</td></tr> <tr><td>Warning</td><td>Orange</td><td>Network timeout</td></tr> </tbody> </table> <div id="page-nav-root"></div> </main> <aside class="doc-toc" id="toc-root"></aside> </div> <script src="../js/docs.js"></script>
+</body>
+</html>

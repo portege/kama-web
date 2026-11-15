@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BABEH Documentation</title>
+  <link rel="stylesheet" href="css/docs.css">
+  <script src="js/docs.js" defer></script>
+  <style>
+    .topnav{position:sticky;top:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:0 32px;height:52px;background:var(--bg);border-bottom:1px solid var(--border);box-shadow:var(--shadow)}
+    .topnav-brand{font-size:1.15rem;font-weight:700;color:var(--text);text-decoration:none;letter-spacing:-.4px}
+    .topnav-brand em{font-style:normal;color:var(--accent)}
+    .topnav-links{display:flex;align-items:center;gap:4px}
+    .topnav-links a{font-size:.8rem;font-weight:500;color:var(--text-muted);padding:5px 11px;border-radius:6px;text-decoration:none;transition:color .2s,background .2s}
+    .topnav-links a:hover{color:var(--text);background:var(--bg-alt)}
+    .topnav-links a.active{color:var(--accent);background:var(--accent-light)}
+    .topnav-right{display:flex;align-items:center;gap:8px}
+    .topnav-theme{background:none;border:1px solid var(--border);color:var(--text-muted);padding:4px 10px;border-radius:6px;cursor:pointer;font-size:.75rem;font-weight:500;font-family:inherit;transition:color .2s,border-color .2s}
+    .topnav-theme:hover{color:var(--text);border-color:var(--text-muted)}
+    .topnav-hamburger{display:none;background:none;border:none;color:var(--text);font-size:1.3rem;cursor:pointer;padding:4px 8px}
+    .topnav-mobile{display:none;flex-direction:column;background:var(--bg);border-bottom:1px solid var(--border);padding:8px 16px 12px}
+    .topnav-mobile.open{display:flex}
+    .topnav-mobile a{padding:8px 12px;font-size:.85rem;color:var(--text-muted);text-decoration:none;border-radius:6px}
+    .topnav-mobile a:hover{background:var(--bg-alt);color:var(--text)}
+    .topnav-mobile a.active{color:var(--accent)}
+    @media(max-width:640px){.topnav-links{display:none}.topnav-hamburger{display:block}.topnav{padding:0 16px}}
+  </style>
+</head>
+<body>
+  <!-- Top Navigation -->
+  <nav class="topnav">
+    <a class="topnav-brand" href="../../frontend/index.html">BABEH<em>!</em></a>
+    <div class="topnav-links">
+      <a href="../../frontend/index.html">Search</a>
+      <a href="../../frontend/pricing.html">Pricing</a>
+      <a href="../../frontend/use-cases.html">Use Cases</a>
+      <a href="index.html" class="active">Docs</a>
+      <a href="../../admin/">Admin</a>
+    </div>
+    <div class="topnav-right">
+      <button class="topnav-theme" id="topThemeBtn" onclick="toggleTheme();updateTopThemeBtn()">Light</button>
+      <button class="topnav-hamburger" onclick="document.getElementById('topMobileMenu').classList.toggle('open')">&#9776;</button>
+    </div>
+  </nav>
+  <div class="topnav-mobile" id="topMobileMenu">
+    <a href="../../frontend/index.html">Search</a>
+    <a href="../../frontend/pricing.html">Pricing</a>
+    <a href="../../frontend/use-cases.html">Use Cases</a>
+    <a href="index.html" class="active">Docs</a>
+    <a href="../../admin/">Admin</a>
+  </div>
+  <div class="landing">
+    <h1 class="landing-title">BABEH<span style="-webkit-text-fill-color:#e040fb">!</span>Docs</h1>
+    <p class="landing-tagline">KBaaS Commerce Platform &mdash; Complete Reference Guide</p>
+
+    <div class="lang-selector">
+      <a class="lang-card" href="en/getting-started.html">
+        <span class="lang-name">English</span>
+        <span class="lang-label">Full documentation</span>
+      </a>
+      <a class="lang-card" href="id/getting-started.html">
+        <span class="lang-name">Indonesia</span>
+        <span class="lang-label">Dokumentasi lengkap</span>
+      </a>
+    </div>
+  </div>
+
+  <div class="landing-sections">
+    <h2>Getting Started</h2>
+    <div class="card-grid">
+      <a class="doc-card" href="en/getting-started.html">
+        <span class="card-title">Quick Start</span>
+        <span class="card-desc">Installation, first login, and initial setup</span>
+      </a>
+      <a class="doc-card" href="en/knowledge-base.html">
+        <span class="card-title">Knowledge Base</span>
+        <span class="card-desc">Upload and manage product knowledge documents</span>
+      </a>
+      <a class="doc-card" href="en/pricing-database.html">
+        <span class="card-title">Pricing Database</span>
+        <span class="card-desc">Import, manage, and search pricing data</span>
+      </a>
+    </div>
+
+    <h2>Core Features</h2>
+    <div class="card-grid">
+      <a class="doc-card" href="en/product-specs.html">
+        <span class="card-title">Product Specifications</span>
+        <span class="card-desc">Structured specs with schema editor</span>
+      </a>
+      <a class="doc-card" href="en/search-engine.html">
+        <span class="card-title">Search Engine</span>
+        <span class="card-desc">FTS5, BM25, vector search, and hybrid queries</span>
+      </a>
+      <a class="doc-card" href="en/analytics.html">
+        <span class="card-title">Analytics</span>
+        <span class="card-desc">Query insights, usage metrics, and dashboards</span>
+      </a>
+    </div>
+
+    <h2>Technical</h2>
+    <div class="card-grid">
+      <a class="doc-card" href="en/api-reference.html">
+        <span class="card-title">API Reference</span>
+        <span class="card-desc">REST endpoints, authentication, and examples</span>
+      </a>
+      <a class="doc-card" href="en/architecture.html">
+        <span class="card-title">Architecture</span>
+        <span class="card-desc">System design, data flow, and components</span>
+      </a>
+      <a class="doc-card" href="en/configuration.html">
+        <span class="card-title">Configuration</span>
+        <span class="card-desc">Environment variables and runtime settings</span>
+      </a>
+      <a class="doc-card" href="en/deployment.html">
+        <span class="card-title">Deployment</span>
+        <span class="card-desc">Docker, EC2, and production setup</span>
+      </a>
+    </div>
+
+    <h2>Administration</h2>
+    <div class="card-grid">
+      <a class="doc-card" href="en/user-management.html">
+        <span class="card-title">User Management</span>
+        <span class="card-desc">Roles, permissions, and access control</span>
+      </a>
+      <a class="doc-card" href="en/widget-integration.html">
+        <span class="card-title">Widget Integration</span>
+        <span class="card-desc">Embed search on any website</span>
+      </a>
+      <a class="doc-card" href="en/security.html">
+        <span class="card-title">Security</span>
+        <span class="card-desc">Auth, CORS, rate limiting, and best practices</span>
+      </a>
+    </div>
+
+    <h2>Reference</h2>
+    <div class="card-grid">
+      <a class="doc-card" href="en/troubleshooting.html">
+        <span class="card-title">Troubleshooting</span>
+        <span class="card-desc">Common issues and solutions</span>
+      </a>
+      <a class="doc-card" href="en/appendix.html">
+        <span class="card-title">Appendix</span>
+        <span class="card-desc">Glossary, changelog, and resources</span>
+      </a>
+    </div>
+  </div>
+
+  <script>
+    function updateTopThemeBtn() {
+      var btn = document.getElementById('topThemeBtn');
+      if (!btn) return;
+      var isLight = document.documentElement.getAttribute('data-theme') === 'light';
+      btn.textContent = isLight ? 'Dark' : 'Light';
+    }
+    document.addEventListener('DOMContentLoaded', updateTopThemeBtn);
+  </script>
+</body>
+</html>

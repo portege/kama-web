@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head> <meta charset="UTF-8" /> <meta name="viewport" content="width=device-width, initial-scale=1.0" /> <title>Financing Rates — BABEH Docs</title> <link rel="stylesheet" href="../css/docs.css" />
+</head>
+<body> <button class="hamburger" id="hamburgerBtn">Menu</button> <div id="sidebar-root"></div> <div class="doc-layout"> <main class="doc-main"> <div id="breadcrumb-root"></div> <h1>Financing Rates</h1> <p class="subtitle"> Configure universal annual interest rates per tenor so the AI can calculate and answer financing questions like <em>"berapa cicilan Honda Civic dp 50 juta tenor 3 tahun?"</em> </p> <div class="callout callout-info"> <div class="callout-title">Who can access this?</div> <p> <span class="badge badge-role-editor">editor</span> <span class="badge badge-role-manager">manager</span> <span class="badge badge-role-superadmin">superadmin</span> </p> </div>
+
+<!-- ============================================ -->
+<h2 id="overview">Overview</h2>
+<p> The Financing Rates table stores <strong>one universal interest rate per tenor bucket</strong>, applicable to all loan types. When the <strong>Intent Router</strong> detects financing-related keywords in a user query, the matching active rate rows are fetched and passed to the LLM as context — enabling the AI to calculate installment amounts on the fly. </p>
+
+<div class="callout callout-info">
+  <div class="callout-title">Financing Intent Keywords</div>
+  <p> The Intent Router recognises these terms as financing signals:<br/> <code>cicilan</code>, <code>angsuran</code>, <code>dp</code>, <code>uang muka</code>, <code>tenor</code>, <code>kredit</code>, <code>leasing</code>, <code>installment</code>, <code>down payment</code> </p>
+</div>
+
+<div class="mermaid">
+flowchart LR
+  A[ User Query] --> B{Intent Router}
+  B -->|financing keywords detected| C[Fetch Active Rates]
+  C --> D[Rate Rows by Tenor]
+  D --> E[ LLM Context]
+  E --> F[ Answer with Calculated Installment]
+
+  style A fill:#3B82F6,color:#fff
+  style B fill:#8B5CF6,color:#fff
+  style C fill:#F59E0B,color:#fff
+  style F fill:#22C55E,color:#fff
+</div>
+
+<!-- ============================================ -->
+<h2 id="fields">Data Fields</h2>
+<p>Each row in the Financing Rates table represents a single tenor with its applicable annual interest rate:</p>
+<table>
+  <thead> <tr><th>Field</th><th>Type</th><th>Editable</th><th>Description</th></tr> </thead>
+  <tbody>
+    <tr><td><code>tenor_months</code></td><td>Integer</td><td>On add only</td><td>Loan tenure in months (e.g., <code>12</code>, <code>24</code>, <code>36</code>, <code>48</code>, <code>60</code>)</td></tr>
+    <tr><td><code>annual_rate_pct</code></td><td>Real</td><td>✅</td><td>Annual interest rate as a percentage (e.g., <code>7.5</code> for 7.5%)</td></tr>
+    <tr><td><code>label</code></td><td>Text</td><td>✅</td><td>Human-readable label shown in the UI (e.g., <code>3 Tahun</code>). Optional.</td></tr>
+    <tr><td><code>is_active</code></td><td>Boolean</td><td>✅</td><td>Toggle to enable or disable this rate. Only active rates are used in AI calculations.</td></tr>
+    <tr><td><code>updated_at</code></td><td>Timestamp</td><td>—</td><td>Auto-updated whenever the rate is saved.</td></tr>
+  </tbody>
+</table>
+
+<!-- ============================================ -->
+<h2 id="browse">Browse Rates</h2>
+<p> The Financing Rates page displays all configured tenor rows in a table, sorted by <code>tenor_months</code>. </p>
+<div class="screenshot-wrapper">
+  <div class="screenshot-placeholder">
+    <div class="ph-icon"></div>
+    <img src="../images/financing-rate-babeh.png" alt="Financing Rates table" />
+    <div class="ph-label">Screenshot: Financing Rates table showing tenor, annual rate, label, active toggle, and actions</div>
+  </div>
+</div>
+
+<table>
+  <thead> <tr><th>Column</th><th>Description</th></tr> </thead>
+  <tbody>
+    <tr><td><strong>Tenor</strong></td><td>Duration in months, with a year equivalent shown alongside</td></tr>
+    <tr><td><strong>Annual Rate (%)</strong></td><td>Inline editable input — the interest rate for this tenor</td></tr>
+    <tr><td><strong>Label</strong></td><td>Inline editable text — optional friendly name (e.g., <code>5 Tahun</code>)</td></tr>
+    <tr><td><strong>Active</strong></td><td>Toggle switch — inactive rates are excluded from AI context</td></tr>
+    <tr><td><strong>Last Updated</strong></td><td>Timestamp of the last save</td></tr>
+    <tr><td><strong>Actions</strong></td><td><strong>Save</strong> and <strong>Delete</strong> buttons per row</td></tr>
+  </tbody>
+</table>
+
+<!-- ============================================ -->
+<h2 id="add">Adding a Tenor</h2>
+<ol class="steps">
+  <li>At the top of the page, fill in the <strong>Tenor (months)</strong> field — e.g., <code>96</code> for 8 years.</li>
+  <li>Enter the <strong>Annual Rate (%)</strong> — e.g., <code>9.0</code>.</li>
+  <li>Optionally enter a <strong>Label</strong> — e.g., <code>8 Tahun</code>.</li>
+  <li>Click <strong>"+ Add"</strong>. The new row appears in the table immediately.</li>
+</ol>
+
+<div class="callout callout-warning">
+  <div class="callout-title">Unique Tenor</div>
+  <p>Each <code>tenor_months</code> value must be unique. Adding a duplicate tenor will return an error.</p>
+</div>
+
+<!-- ============================================ -->
+<h2 id="edit">Editing a Rate</h2>
+<p> Each row has inline editable fields. No modal needed — edit directly in the table. </p>
+<ol class="steps">
+  <li>Locate the row you want to update.</li>
+  <li>Modify the <strong>Annual Rate (%)</strong> or <strong>Label</strong> inline.</li>
+  <li>Toggle <strong>Active</strong> on or off as needed.</li>
+  <li>Click <strong>Save</strong> on that row to persist the changes.</li>
+</ol>
+
+<!-- ============================================ -->
+<h2 id="delete">Deleting a Rate</h2>
+<p>Click the <strong>Delete</strong> button on any row. A confirmation dialog appears. Once confirmed, the row is permanently removed.</p>
+
+<div class="callout callout-danger">
+  <div class="callout-title">Irreversible Action</div>
+  <p>Deleted rates cannot be recovered. You can re-add them manually or re-run <code>python setup_financing_db.py</code> on the server to restore the default OJK-based seed data.</p>
+</div>
+
+<!-- ============================================ -->
+<h2 id="ojk-reference">OJK Reference Rates</h2>
+<p> Below the rate table, a read-only <strong>OJK Reference</strong> panel shows estimated benchmark interest rate ranges for common loan types in Indonesia (Kredit Kendaraan, KPR, KTA), based on BI Rate and OJK data. Use it as a guide when configuring your rates. </p>
+
+<div class="callout callout-info">
+  <div class="callout-title">Reference Only</div>
+  <p>The OJK reference table is read-only. Only the rates you configure in the table above are used in AI calculations.</p>
+</div>
+
+<!-- ============================================ -->
+<h2 id="how-ai-uses">How the AI Uses Financing Rates</h2>
+<p>When a user submits a financing-related query, the following pipeline runs:</p>
+
+<div class="mermaid">
+sequenceDiagram
+  actor User
+  participant Router as Intent Router
+  participant DB as Financing Rates DB
+  participant LLM as AI (LLM)
+
+  User->>Router: "cicilan Honda Civic dp 50 juta tenor 36 bulan"
+  Router->>DB: Fetch rate where tenor_months = 36 AND is_active = true
+  DB-->>Router: annual_rate_pct = 6.5%
+  Router->>LLM: Query + OTR price + DP + tenor + rate as context
+  LLM-->>User: "Cicilan = Rp X/bulan (36 bulan @ 6.5%/tahun)"
+</div>
+
+<div class="callout callout-tip">
+  <div class="callout-title">Tip: Keep All Tenors Active</div>
+  <p>For best AI coverage, keep all common tenors active (12, 24, 36, 48, 60 months). If a user asks for a tenor with no active rate, the AI will note that it is unavailable.</p>
+</div>
+
+<div id="page-nav-root"></div> </main> <aside class="doc-toc" id="toc-root"></aside> </div> <script src="../js/docs.js"></script>
+</body>
+</html>

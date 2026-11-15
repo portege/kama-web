@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="id">
+<head> <meta charset="UTF-8" /> <meta name="viewport" content="width=device-width, initial-scale=1.0" /> <title>Peran &amp; Hak Akses — BABEH Docs</title> <link rel="stylesheet" href="../css/docs.css" />
+</head>
+<body> <button class="hamburger" id="hamburgerBtn">Menu</button> <div id="sidebar-root"></div> <div class="doc-layout"> <main class="doc-main"> <div id="breadcrumb-root"></div> <div class="callout callout-warning"> <div class="callout-title">Halaman ini sedang dalam proses penerjemahan</div> <p> Konten di bawah ini masih dalam Bahasa Inggris dan sedang diterjemahkan ke Bahasa Indonesia.
+ <a href="../en/roles.html">Read in English →</a> </p> </div> <h1>Peran &amp; Hak Akses</h1> <p class="subtitle"> Referensi lengkap 4 peran dan apa saja yang bisa diakses masing-masing peran.
+ </p> <h2 id="role-overview">Ringkasan Peran</h2> <table> <thead><tr><th>Peran</th><th>Tujuan</th><th>Pengguna Tipikal</th></tr></thead> <tbody> <tr> <td><span class="badge badge-role-superadmin">superadmin</span></td> <td>Akses penuh — manajemen pengguna, mutasi skema, log aktivitas, VectorDB viewer</td> <td>Administrator sistem</td> </tr> <tr> <td><span class="badge badge-role-manager">manager</span></td> <td>Manajemen konten + semua analitik + pengaturan + baca skema</td> <td>Manajer produk</td> </tr> <tr> <td><span class="badge badge-role-analyst">analyst</span></td> <td>Analitik hanya-baca, riwayat query, pengaturan, debug pencarian</td> <td>Analis data</td> </tr> <tr> <td><span class="badge badge-role-editor">editor</span></td> <td>Penulisan konten — knowledge base, harga, spesifikasi produk</td> <td>Penulis konten, data entry</td> </tr> </tbody> </table> <h2 id="hierarchy">Hierarki Peran</h2> <div class="code-block"> <div class="code-header">Hierarki</div>
+<pre><code>superadmin
+├── Semua yang bisa manager lakukan
+├── CRUD pengguna (buat/lihat/ubah/hapus pengguna lain)
+├── Log Aktivitas
+├── VectorDB Viewer
+└── Mutasi skema (tambah/edit/rename/hapus field)
+
+manager
+├── Semua yang bisa analyst lakukan
+├── Semua yang bisa editor lakukan
+└── Baca skema (lihat skema, riwayat, diff)
+
+analyst (analitik hanya-baca)
+├── Ringkasan, Penggunaan, Wawasan Pencarian, Analitik Pengguna
+├── Riwayat Query (lihat + ekspor)
+├── Pengaturan (baca + tulis pengaturan LLM)
+└── Debug Pencarian
+
+editor (penulisan konten)
+├── Manajemen Knowledge Base
+├── Manajemen Database Harga
+├── Manajemen Spesifikasi Produk
+└── Re-index dokumen</code></pre> </div> <h2 id="page-permissions">Matriks Izin Halaman Admin</h2> <p>Lihat matriks lengkap di <a href="../en/roles.html#page-permissions">versi English</a>.</p> <h2 id="api-permissions">Izin Endpoint API</h2> <p>Lihat tabel lengkap di <a href="../en/roles.html#api-permissions">versi English</a>.</p> <h2 id="plan-gating">Pembatasan Berdasarkan Paket</h2> <p>Selain pembatasan berdasarkan peran, <strong>paket langganan</strong> menambahkan lapisan pembatasan kedua. Bahkan superadmin tidak dapat mengakses halaman atau endpoint API yang dinonaktifkan oleh paket aktif. Fitur yang dinonaktifkan mengembalikan <strong>HTTP 403</strong> dan item sidebar disembunyikan di frontend. Lihat <a href="getting-started.html#plan-tiers">Paket Langganan</a> untuk matriks lengkap.</p> <p>Halaman <strong>Financing Rates</strong> ditambahkan ke daftar halaman konten — dapat diakses oleh superadmin, manager, dan editor.</p> <div id="page-nav-root"></div> </main> <aside class="doc-toc" id="toc-root"></aside> </div> <script src="../js/docs.js"></script>
+</body>
+</html>

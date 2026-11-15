@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head> <meta charset="UTF-8" /> <meta name="viewport" content="width=device-width, initial-scale=1.0" /> <title>Getting Started — BABEH Docs</title> <link rel="stylesheet" href="../css/docs.css" />
+</head>
+<body> <button class="hamburger" id="hamburgerBtn">Menu</button> <div id="sidebar-root"></div> <div class="doc-layout"> <main class="doc-main"> <div id="breadcrumb-root"></div> <h1>Getting Started</h1> <p class="subtitle"> Learn how to log in, navigate the admin dashboard, and begin managing your knowledge base.
+ </p> <!-- ============================================ --> <h2 id="overview">What is BABEH?</h2> <p> BABEH (Knowledge Base as a Service) is an intelligent document management and AI-powered search platform.
+ It allows you to upload documents, manage product pricing and specifications, and provide an AI chatbot
+ that answers questions based on your data — with full source citations.
+ </p> <h3 id="architecture">System Architecture</h3> <p> BABEH uses a <strong>hybrid search</strong> approach combining semantic understanding (Vector search)
+ with keyword matching (BM25) to deliver highly relevant results. Here's how the system fits together:
+ </p> <div class="mermaid">
+graph TB
+ subgraph "Data Ingestion"
+ A[ Upload Files<br/>PDF, TXT] --> C[Chunking Engine]
+ B[ Ingest URLs<br/>Web Scraping] --> C
+ C --> D[Vector Embeddings]
+ C --> E[FTS5<br/>BM25 Index]
+ end
+
+ subgraph "Data Management"
+ F[ Pricing Database] --> D
+ F --> G[Pricing FTS5]
+ H[ Product Specs] --> D
+ H --> I[Product Specifications FTS5]
+ J2[ Financing Rates] --> K2[Financing FTS5]
+ end
+
+ subgraph "Query Pipeline"
+ J[ User Query] --> K{Intent Router}
+ K --> L[Vector Search<br/>Semantic]
+ K --> M[BM25 Search<br/>Keyword]
+ K --> N[Pricing Search]
+ K --> O[Spec Search]
+ K --> O2[Financing Search]
+ L --> P[Fusion + Threshold]
+ M --> P
+ N --> P
+ O --> P
+ O2 --> P
+ P --> Q[ LLM<br/>Bedrock / Gemini]
+ Q --> R[ Response<br/>with Citations]
+ end
+
+ style A fill:#3B82F6,color:#fff
+ style B fill:#3B82F6,color:#fff
+ style D fill:#8B5CF6,color:#fff
+ style E fill:#F59E0B,color:#fff
+ style J2 fill:#06B6D4,color:#fff
+ style K2 fill:#F59E0B,color:#fff
+ style Q fill:#22C55E,color:#fff
+ style R fill:#22C55E,color:#fff
+ </div> <!-- ============================================ --> <h2 id="login">Logging In</h2> <h3 id="access-admin">Accessing the Admin Panel</h3> <p>Open your browser and navigate to the admin URL:</p> <pre><code>https://workspace.babeh.com/admin/</code></pre> <p>You'll see the login page with the BABEH logo. Enter your <strong>username</strong> and <strong>password</strong>.</p> <div class="screenshot-wrapper"> <img src="" alt="Login page" /> <div class="screenshot-placeholder"> <div class="ph-icon"></div> <div class="ph-label" style="display: flex; justify-content: center; align-items: center; height: 100%;"><img src="../images/workspace-babeh.png" style="max-width: 100%; max-height: 100%; display: block;"></div> </div> </div> <h3 id="default-credentials">Default Credentials</h3> <div class="callout callout-danger"> <div class="callout-title">Security Warning</div> <p> The system ships with pre-defined credentials.<br /> <strong>Change this immediately after your first login!</strong> A warning banner will appear
+ on the dashboard until you update your password.
+ </p> </div> <h3 id="change-password">Changing Your Password</h3> <ol class="steps"> <li>Log in with the default or current credentials.</li> <li>Navigate to <strong>Users</strong> from the sidebar (superadmin) or locate the <strong>"Change My Password"</strong> card on the Users page.</li> <li>Enter your current password, then your new password.</li> <li>Click <strong>Change Password</strong> to save.</li> </ol> <div class="callout callout-info"> <div class="callout-title">Password Limit</div> <p>Passwords are hashed with <strong>bcrypt</strong>, which has a maximum of <strong>72 bytes</strong>. Longer passwords will be silently truncated.</p> </div> <h3 id="session">Session & Token</h3> <p> After login, a <strong>JWT token</strong> is issued that expires after <strong>8 hours</strong>.
+ You'll be automatically logged out when the token expires and redirected to the login page.
+ There is no refresh token — simply log in again.
+ </p> <!-- ============================================ --> <h2 id="dashboard">Navigating the Dashboard</h2> <h3 id="sidebar-nav">Sidebar Navigation</h3> <p>The left sidebar is your primary navigation. It's organized into sections:</p> <div class="callout callout-info"> <div class="callout-title">Workspace &amp; Plan Label</div> <p> Directly below the BABEH logo you'll see two labels: </p> <ul> <li><strong>Workspace</strong> — your project or deployment name, set via the <code>WORKSPACE_NAME</code> environment variable. Useful when running multiple BABEH deployments for different brands or clients.</li> <li><strong>Plan badge</strong> — shows the active subscription tier (<strong>Starter</strong>, <strong>Professional</strong>, or <strong>Enterprise</strong>). The badge is color-coded and reflects which features are enabled for this deployment.</li> </ul> </div> <table> <thead> <tr><th>Section</th><th>Pages</th><th>Description</th></tr> </thead> <tbody> <tr> <td><strong>Home</strong></td> <td> Home</td> <td>Welcome page with quick stats and navigation cards</td> </tr> <tr> <td><strong>Content</strong></td> <td> Knowledge Base<br/> Pricing Database<br/> Product Specifications<br/> Finance Rates</td> <td>Upload, manage, and organize your data sources</td> </tr> <tr> <td><strong>Analytics</strong></td> <td> Summary<br/> LLM Metrics<br/> Search Insights<br/> User Analytics<br/> Query History</td> <td>Monitor usage, performance, and search patterns</td> </tr> <tr> <td><strong>Management</strong></td> <td> Users<br/> Activity Log<br/> Settings<br/> Search Debug</td> <td>System configuration and administration</td> </tr> </tbody> </table> <div class="screenshot-wrapper"> <div class="screenshot-placeholder"> <div class="ph-icon"></div><img src="../images/leftmenu-babeh.png" alt="Sidebar navigation" /> <div class="ph-label">Screenshot: Admin sidebar with section labels and navigation items</div> </div> </div> <div class="callout callout-info"> <div class="callout-title">Role-Based Visibility</div> <p> Some menu items are hidden based on your role. For example, <strong>Users</strong> and <strong>Activity Log</strong> are only visible to <span class="badge badge-role-superadmin">superadmin</span> users.
+ See <a href="roles.html">Roles & Permissions</a> for the full access matrix.
+ </p> </div> <h3 id="welcome-page">Welcome Page</h3> <p>The welcome page (Home) provides:</p> <ul> <li><strong>Personalized greeting</strong> with your username</li> <li><strong>Quick statistics</strong> — Total queries, documents, vector embeddings, and pricing records</li> <li><strong>Navigation cards</strong> — Grouped by Content Management, Analytics & Reports, and System Management</li> </ul> <div class="screenshot-wrapper"> <div class="screenshot-placeholder"> <div class="ph-icon"></div><img src="../images/welcome-babeh.png" alt="Welcome page" /> <div class="ph-label">Screenshot: Welcome page with quick stats and navigation cards</div> </div> </div> <h3 id="dark-mode">Dark Mode</h3> <p> Toggle dark mode using the <strong> / </strong> button. Your preference is saved in the browser
+ and persists across sessions. On first visit, the system respects your OS preference.
+ </p> <!-- ============================================ --> <h2 id="roles-overview">User Roles Overview</h2> <p>BABEH has <strong>four user roles</strong>, each with different access levels:</p> <table> <thead> <tr><th>Role</th><th>Description</th><th>Primary Use</th></tr> </thead> <tbody> <tr> <td><span class="badge badge-role-superadmin">superadmin</span></td> <td>Full system access</td> <td>System administrators who manage users, schemas, and monitor all activity</td> </tr> <tr> <td><span class="badge badge-role-manager">manager</span></td> <td>Content + analytics access</td> <td>Team leads who manage content and review analytics</td> </tr> <tr> <td><span class="badge badge-role-analyst">analyst</span></td> <td>Analytics + settings access</td> <td>Data analysts who review performance and tune settings</td> </tr> <tr> <td><span class="badge badge-role-editor">editor</span></td> <td>Content management only</td> <td>Content editors who upload documents and manage pricing/specs data</td> </tr> </tbody> </table> <div class="callout callout-tip"> <div class="callout-title">Tip</div> <p>See the <a href="roles.html">Roles & Permissions</a> page for a complete feature-by-feature access matrix.</p> </div> <!-- ============================================ --> <h2 id="plan-tiers">Plan Tiers</h2> <p> BABEH deployments are licensed under one of three plan tiers. Plans control which features are available and enforce monthly usage limits. Plans are configured via environment variables in <code>backend/.env</code> — there is no plan management UI. </p> <table> <thead> <tr><th>Feature</th><th>Starter</th><th>Professional</th><th>Enterprise</th></tr> </thead> <tbody> <tr><td>Pricing Database</td><td>✅</td><td>✅</td><td>✅</td></tr> <tr><td>Product Specifications</td><td>❌</td><td>✅</td><td>✅</td></tr> <tr><td>Financing Rates</td><td>❌</td><td>✅</td><td>✅</td></tr> <tr><td>Query History</td><td>❌</td><td>✅</td><td>✅</td></tr> <tr><td>Search Insights</td><td>❌</td><td>✅</td><td>✅</td></tr> <tr><td>User Analytics</td><td>❌</td><td>✅</td><td>✅</td></tr> <tr><td>Activity Log</td><td>❌</td><td>✅</td><td>✅</td></tr> <tr><td>Search Debug</td><td>❌</td><td>✅</td><td>✅</td></tr> <tr><td>API Key Access</td><td>❌</td><td>✅</td><td>✅</td></tr> <tr><td>BYOK (Bring Your Own Key)</td><td>❌</td><td>❌</td><td>✅</td></tr> <tr><td>SAML / SSO</td><td>❌</td><td>❌</td><td>✅</td></tr> <tr><td>Monthly Query Quota</td><td>Limited (hard block)</td><td>High (soft warning)</td><td>Unlimited</td></tr> </tbody> </table> <div class="callout callout-warning"> <div class="callout-title">Plan Enforcement</div> <p> Accessing a page or API endpoint disabled by the plan returns <strong>403 Forbidden</strong>. On the Starter plan, exceeding the monthly query quota returns <strong>429 Too Many Requests</strong>. Professional and Enterprise plans receive a soft <code>X-Quota-Warning</code> header instead. </p> </div> <!-- ============================================ --> <h2 id="first-steps">First Steps Checklist</h2> <p>After logging in for the first time, follow this checklist to get up and running:</p> <ol class="steps"> <li> <strong>Change the default password</strong><br/> Go to Users → Change My Password. This removes the security warning banner.
+ </li> <li> <strong>Configure your LLM provider</strong><br/> Go to Settings → select <strong>AWS Bedrock</strong> or <strong>Google Gemini</strong> as your AI provider.
+ </li> <li> <strong>Upload your first document</strong><br/> Go to Knowledge Base → drag a PDF or TXT file into the upload area.
+ </li> <li> <strong>Test a search query</strong><br/> Use the Search Debug page to verify your document is searchable and results are relevant.
+ </li> <li> <strong>Embed the widget</strong><br/> Copy the widget snippet from the <a href="widget.html">Widget</a> documentation and add it to your website.
+ </li> </ol> <div class="mermaid">
+graph LR
+ A[ Change Password] --> B[ Configure LLM]
+ B --> C[ Upload Document]
+ C --> D[ Test Search]
+ D --> E[ Embed Widget]
+
+ style A fill:#ef4444,color:#fff
+ style B fill:#f59e0b,color:#fff
+ style C fill:#3B82F6,color:#fff
+ style D fill:#8B5CF6,color:#fff
+ style E fill:#22C55E,color:#fff
+ </div> <div id="page-nav-root"></div> </main> <aside class="doc-toc" id="toc-root"></aside> </div> <script src="../js/docs.js"></script>
+</body>
+</html>

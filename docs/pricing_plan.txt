@@ -1,0 +1,75 @@
+### Paket dan Harga
+
+**Harga yang Transparan dan Mudah dipahami. Tingkatkan sesuai kebutuhan Anda. Tanpa biaya tersembunyi. Hemat 20% dengan pembayaran tahunan.**
+
+---
+
+#### Paket Starter
+**Semua yang Anda butuhkan untuk cepat memulai.**
+
+- **Harga:** $19 per bulan
+- **Fitur:**
+  - **Basis Pengetahuan:** 20 dokumen, 10 MB penyimpanan
+  - **Analisis:** Ringkasan, metrik LLM
+  - **Pengguna:** 1 Admin, 1 Manajer, 1 Konten, 1 Analis
+  - **Konfigurasi:** 300 token input / 900 token output, batas kueri bulanan, tenant bersama
+
+**Mulai Sekarang**
+
+---
+
+#### Paket Professional
+**Analisis lengkap, tipe konten yang lebih kaya, dan lebih banyak kursi.**
+
+- **Harga:** $245 per bulan
+- **Fitur:**
+  - **Basis Pengetahuan:** Semua fitur Starter + Skema Konten
+  - **Analisis:** Riwayat kueri, wawasan pencarian, analisis pengguna, log aktivitas
+  - **Pengguna:** 3 Admin, 3 Manajer, 3 Konten, 3 Analis
+  - **Konfigurasi:** 600 token input / 2,000 token output, batas kueri bulanan, tenant bersama
+
+**Mulai Sekarang**
+
+---
+
+#### Paket Enterprise
+**Infrastruktur khusus, kontrol penuh, dan skala tanpa batas.**
+
+- **Harga:** Hubungi Penjualan untuk harga dan SLA khusus
+- **Fitur:**
+  - **Semua fitur Professional**
+  - **Alat Debug Pencarian**
+  - **Whitelabel & Merek Kustom**
+  - **Akses REST API**
+  - **BYOK - Bawa Kunci Sendiri**
+  - **Autentikasi SAML / SSO**
+  - **Deploy Multi-Region**
+  - **Pengguna & kueri tanpa batas**
+  - **Dukungan khusus & SLA khusus**
+
+**Hubungi Kami**
+
+---
+
+### Perbandingan Fitur
+
+| Fitur | Starter | Professional | Enterprise |
+|-------|---------|--------------|-------------|
+| Basis Pengetahuan | 20 dokumen | 50 dokumen | Tanpa batas |
+| Penyimpanan | 10 MB | 100 MB | Kustom |
+| Skema Konten | - | - | - |
+| Analisis | Ringkasan, metrik LLM | Riwayat kueri, wawasan pencarian, analisis pengguna, log aktivitas | Riwayat kueri, wawasan pencarian, analisis pengguna, log aktivitas |
+| Pengguna | 1 Admin, 1 Manajer, 1 Konten, 1 Analis | 3 Admin, 3 Manajer, 3 Konten, 3 Analis | Tanpa batas |
+| Konfigurasi | 300 token input / 900 token output | 600 token input / 2,000 token output | Kustom |
+| Infrastruktur | Tenant bersama | Tenant bersama | Tenant khusus |
+| Fitur Tambahan | - | Alat Debug Pencarian, Whitelabel, REST API, BYOK, SAML / SSO, Deploy Multi-Region, Dukungan khusus, SLA khusus | Alat Debug Pencarian, Whitelabel, REST API, BYOK, SAML / SSO, Deploy Multi-Region, Dukungan khusus, SLA khusus |
+
+---
+
+### Pilih Paket yang Tepat untuk Anda
+
+- **Starter:** Ideal untuk tim kecil yang ingin memulai.
+- **Professional:** Cocok untuk tim yang membutuhkan fitur tambahan dan analisis lebih lanjut.
+- **Enterprise:** Terbaik untuk perusahaan besar yang membutuhkan infrastruktur khusus dan dukungan khusus.
+
+**Mulai Sekarang** atau **Hubungi Kami** untuk informasi lebih lanjut.

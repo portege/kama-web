@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head> <meta charset="UTF-8" /> <meta name="viewport" content="width=device-width, initial-scale=1.0" /> <title>How Search Works — BABEH Docs</title> <link rel="stylesheet" href="../css/docs.css" />
+</head>
+<body> <button class="hamburger" id="hamburgerBtn">Menu</button> <div id="sidebar-root"></div> <div class="doc-layout"> <main class="doc-main"> <div id="breadcrumb-root"></div> <h1>How Search Works</h1> <p class="subtitle"> Understand the hybrid search pipeline — from query decomposition through vector and keyword search
+ to LLM-generated answers with source citations.
+ </p> <!-- ============================================ --> <h2 id="pipeline">The Full Search Pipeline</h2> <p> When a user submits a query, it passes through a multi-stage pipeline that combines different
+ search strategies for maximum relevance. This is the most critical diagram to understand:
+ </p> <div class="mermaid">
+flowchart TB
+ A[" User Query<br/>'harga honda veloz vs toyota avanza'"] --> B[Query Decomposition]
+ B -->|"Multi-topic detected"| B1["Sub-query 1: 'harga honda veloz'"]
+ B -->|"Multi-topic detected"| B2["Sub-query 2: 'harga toyota avanza'"]
+ B1 --> C[Intent Router]
+ B2 --> C
+ C -->|"pricing keyword"| D[Pricing Database Search]
+ C -->|"spec keyword"| DS[Product Spec Search]
+ C -->|"financing keyword"| DF[Financing Rates Search]
+ C -->|"Always"| E[Vector Search<br/>Semantic / Vector DB]
+ C -->|"Always"| F[BM25 Search<br/>Keyword / FTS5]
+
+ D --> G[Hybrid Fusion<br/>Weighted Combination]
+ DS --> G
+ DF --> G
+ E --> G
+ F --> G
+
+ G --> H[Relevance Threshold<br/>Filter low scores]
+ H --> I["Top-K Selection<br/>(default: 5)"]
+ I --> J[" LLM<br/>Bedrock or Gemini"]
+ J --> K[" Response<br/>with [1][2] Citations"]
+
+ style A fill:#3B82F6,color:#fff
+ style C fill:#EC4899,color:#fff
+ style D fill:#F59E0B,color:#fff
+ style DS fill:#F59E0B,color:#fff
+ style DF fill:#F97316,color:#fff
+ style E fill:#8B5CF6,color:#fff
+ style F fill:#F59E0B,color:#fff
+ style G fill:#6366F1,color:#fff
+ style J fill:#22C55E,color:#fff
+ style K fill:#22C55E,color:#fff
+ </div> <!-- ============================================ --> <h2 id="search-methods">Search Methods</h2> <p>BABEH supports three search methods, configurable in <a href="settings.html">Settings</a>:</p> <table> <thead> <tr><th>Method</th><th>How it Works</th><th>Best For</th></tr> </thead> <tbody> <tr> <td><strong>Hybrid</strong> (default)</td> <td>Combines Vector + BM25 results with weighted fusion (default: 50% each)</td> <td>Most queries — balances semantic understanding with keyword precision</td> </tr> <tr> <td><strong>Vector Only</strong></td> <td>Pure semantic search via Vector DB cosine similarity using Cohere multilingual embeddings</td> <td>Conceptual queries, paraphrased questions, cross-language search</td> </tr> <tr> <td><strong>BM25 Only</strong></td> <td>Pure keyword search via SQL DB FTS5 full-text indexing</td> <td>Exact term matching, product codes, technical terms</td> </tr> </tbody> </table> <h3 id="vector-search">Vector Search (Semantic)</h3> <p> The user's query is converted to a <strong>1024-dimensional vector</strong> using the
+ <code>cohere.embed-multilingual-v3</code> model, then compared against all stored document chunks
+ using <strong>cosine similarity</strong> in Vector DB. This finds results that are
+ <strong>semantically similar</strong> even if they use different words.
+ </p> <div class="callout callout-tip"> <div class="callout-title">Multilingual Understanding</div> <p> The Cohere multilingual model understands 100+ languages. A query in Indonesian can match
+ content in English, and vice versa.
+ </p> </div> <h3 id="bm25-search">BM25 Search (Keyword)</h3> <p> Uses SQL DB's <strong>FTS5</strong> (Full-Text Search version 5) engine with the BM25 ranking algorithm.
+ Scores are based on <strong>term frequency</strong> (how often the keyword appears in a chunk)
+ and <strong>inverse document frequency</strong> (how rare the keyword is across all chunks).
+ </p> <h3 id="hybrid-fusion">Hybrid Fusion</h3> <p> In hybrid mode, results from both search methods are combined using weighted scores:
+ </p> <pre><code>final_score = (vector_weight × vector_score) + (bm25_weight × bm25_score)</code></pre> <p> Default weights: <strong>Vector 50%</strong> + <strong>BM25 50%</strong>.
+ These weights are configurable in the system configuration.
+ </p> <!-- ============================================ --> <h2 id="intent-router">Intent Router</h2> <p> Before search begins, every query passes through the <strong>Intent Router</strong> — a lightweight keyword classifier that determines which data sources to query. This avoids unnecessary database lookups and ensures each query reaches the most relevant pipeline. </p> <div class="mermaid">
+flowchart LR
+ Q[" User Query"] --> IR{Intent Router}
+ IR -->|"Always"| KB[" Knowledge Base<br/>Vector + BM25"]
+ IR -->|"pricing keywords"| PR[" Pricing DB"]
+ IR -->|"spec keywords"| SP[" Product Specs DB"]
+ IR -->|"financing keywords"| FN[" Financing Rates DB"]
+
+ style Q fill:#3B82F6,color:#fff
+ style IR fill:#EC4899,color:#fff
+ style KB fill:#8B5CF6,color:#fff
+ style PR fill:#F59E0B,color:#fff
+ style SP fill:#F59E0B,color:#fff
+ style FN fill:#F97316,color:#fff
+ </div> <p>The Intent Router classifies queries into one or more of four intents:</p> <table> <thead> <tr><th>Intent</th><th>Triggered By</th><th>Data Source Activated</th></tr> </thead> <tbody> <tr><td><strong>Knowledge</strong></td><td>Any query (default)</td><td>Document knowledge base (vector + BM25)</td></tr> <tr><td><strong>Pricing</strong></td><td>Pricing keywords detected</td><td>Pricing database (FTS5 + Vector)</td></tr> <tr><td><strong>Specification</strong></td><td>Spec keywords detected</td><td>Product specifications database</td></tr> <tr><td><strong>Financing</strong></td><td>Financing keywords detected</td><td>Financing rates table (installment lookup)</td></tr> </tbody> </table> <div class="callout callout-info"> <div class="callout-title">Multiple Intents</div> <p> A query can trigger multiple intents simultaneously. For example, <em>"cicilan honda civic dp 50 juta spesifikasi"</em> activates all four data sources — knowledge base, pricing, specs, and financing. </p> </div> <!-- ============================================ --> <h2 id="query-decomposition">Query Decomposition</h2> <p> BABEH automatically detects <strong>multi-topic queries</strong> — questions that compare or ask about
+ multiple items simultaneously. These are split into sub-queries for better retrieval.
+ </p> <h3 id="detection-patterns">Detection Patterns</h3> <table> <thead> <tr><th>Pattern</th><th>Language</th><th>Example</th></tr> </thead> <tbody> <tr> <td><code>A vs B</code></td> <td>EN / ID</td> <td>"Honda Civic vs Toyota Corolla"</td> </tr> <tr> <td><code>A atau B</code></td> <td>ID</td> <td>"Civic atau Corolla?"</td> </tr> <tr> <td><code>A or B</code></td> <td>EN</td> <td>"Civic or Corolla?"</td> </tr> <tr> <td><code>A dan B</code></td> <td>ID</td> <td>"fitur Civic dan Corolla"</td> </tr> <tr> <td><code>A and B</code></td> <td>EN</td> <td>"features of Civic and Corolla"</td> </tr> <tr> <td><code>perbedaan A dan B</code></td> <td>ID</td> <td>"perbedaan Civic dan Corolla"</td> </tr> <tr> <td><code>difference between A and B</code></td> <td>EN</td> <td>"difference between Civic and Corolla"</td> </tr> </tbody> </table> <p> When a multi-topic query is detected, each sub-topic is searched independently, and results
+ are merged for more diverse and comprehensive coverage.
+ </p> <!-- ============================================ --> <h2 id="auto-detection">Automatic Database Detection</h2> <p> BABEH automatically scans the query for keywords that indicate the user is asking about
+ <strong>pricing</strong> or <strong>specifications</strong>. When detected, the relevant
+ database is searched in addition to the document knowledge base.
+ </p> <h3 id="pricing-keywords">Pricing Keywords</h3> <p>If any of these words appear in the query, the <strong>Pricing Database</strong> is searched:</p> <pre><code>harga, price, berapa, biaya, cost, tarif, pricing,
+promo, diskon, discount, budget, kisaran, sekitar</code></pre> <h3 id="spec-keywords">Specification Detection</h3> <p> The <strong>Intent Router</strong> classifies the query's intent as <code>specs</code> based on semantic understanding. Any query asking about attributes, features, or technical properties of a product triggers spec search — regardless of the exact words used. </p> <div class="callout callout-tip"> <div class="callout-title">Fully Domain-Agnostic</div> <p> The Intent Router does not rely on domain-specific keywords. It correctly routes queries like "what material is it made of?", "does it support Bluetooth?", or "what are the dimensions?" to the Product Specs database automatically — for any product type (electronics, furniture, machinery, and more). </p> </div> <h3 id="financing-keywords">Financing Keywords</h3> <p>If any of these words appear, the <strong>Financing Rates</strong> database is searched for installment and loan calculation data:</p> <pre><code>cicilan, angsuran, kredit, dp, tenor, installment, down payment,
+monthly payment, bunga, interest, leasing, finance,
+otr, uang muka, per bulan, per month, nyicil</code></pre> <div class="callout callout-info"> <div class="callout-title">Combined Detection</div> <p> A query like "harga dan spesifikasi Honda Civic" triggers <strong>both</strong> pricing and spec detection, searching all three sources (documents + pricing + specs) simultaneously. Adding financing keywords like "cicilan" also activates the financing rates table.
+ </p> </div> <!-- ============================================ --> <h2 id="relevance-threshold">Relevance Threshold & Scoring</h2> <p> After search results are collected, they are filtered by a <strong>relevance threshold</strong> to ensure only meaningful results reach the LLM.
+ </p> <table> <thead> <tr><th>Setting</th><th>Default</th><th>Range</th><th>Effect</th></tr> </thead> <tbody> <tr> <td><strong>Relevance Threshold</strong></td> <td>0.25</td> <td>0.0 – 1.0</td> <td>Results below this score are filtered out before reaching the LLM</td> </tr> <tr> <td><strong>Top K</strong></td> <td>5</td> <td>1 – 50</td> <td>Maximum number of results sent to the LLM as context</td> </tr> </tbody> </table> <h3 id="score-colors">Score Color Coding</h3> <p>In the <a href="search-debug.html">Search Debug</a> tool, scores are color-coded:</p> <div class="callout callout-warning"> <div class="callout-title">Enterprise Feature</div> <p>The <strong>Search Debug</strong> tool is available on the <strong>Enterprise</strong> subscription plan only.</p> </div> <table> <thead> <tr><th>Color</th><th>Score Range</th><th>Meaning</th></tr> </thead> <tbody> <tr><td> <strong>Green</strong></td><td>≥ 0.5</td><td>High relevance — strong match</td></tr> <tr><td> <strong>Yellow</strong></td><td>≥ 0.3</td><td>Moderate relevance — decent match</td></tr> <tr><td> <strong>Red</strong></td><td>< 0.3</td><td>Low relevance — may be filtered out</td></tr> </tbody> </table> <!-- ============================================ --> <h2 id="citations">Citation System</h2> <p> BABEH uses a numbered citation system to ensure AI-generated answers are traceable back to
+ their source documents.
+ </p> <h3 id="how-citations-work">How Citations Work</h3> <div class="mermaid">
+sequenceDiagram
+ participant Search as Search Engine
+ participant LLM as LLM (Bedrock/Gemini)
+ participant User as End User
+
+ Search->>LLM: Send top-K results as numbered sources:<br/>[1] Document A - chunk content...<br/>[2] Document B - chunk content...
+ LLM->>LLM: Generate answer using sources
+ LLM-->>User: "The Honda Civic has 150HP [1] and...<br/>costs around 500 juta [2]"
+ Note right of User: Citations [1], [2] link<br/>back to source documents
+ </div> <p> The response includes a <strong>citations JSON</strong> that maps each reference number to its
+ source document, enabling the frontend to display clickable source links.
+ </p> <!-- ============================================ --> <h2 id="no-info">No Information Response</h2> <p> When no relevant results are found (all scores below threshold, or no matching documents),
+ the system returns a default response:
+ </p> <pre><code>"Maaf, saya tidak memiliki informasi tersebut."
+(Sorry, I don't have that information.)</code></pre> <p>This prevents the AI from hallucinating answers when no relevant context is available.</p> <!-- ============================================ --> <h2 id="streaming">Streaming Responses</h2> <p> BABEH supports <strong>Server-Sent Events (SSE)</strong> streaming for real-time, word-by-word
+ response delivery. The stream includes these event types:
+ </p> <table> <thead> <tr><th>Event</th><th>Description</th></tr> </thead> <tbody> <tr><td><code>search_complete</code></td><td>Search phase finished, results available</td></tr> <tr><td><code>llm_chunk</code></td><td>A piece of the LLM's response text</td></tr> <tr><td><code>citations</code></td><td>Source citation mapping</td></tr> <tr><td><code>metadata</code></td><td>Processing time, model used, token counts</td></tr> <tr><td><code>done</code></td><td>Stream complete</td></tr> </tbody> </table> <div id="page-nav-root"></div> </main> <aside class="doc-toc" id="toc-root"></aside> </div> <script src="../js/docs.js"></script>
+</body>
+</html>

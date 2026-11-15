@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head> <meta charset="UTF-8" /> <meta name="viewport" content="width=device-width, initial-scale=1.0" /> <title>VectorDB Viewer — BABEH Docs</title> <link rel="stylesheet" href="../css/docs.css" />
+</head>
+<body> <button class="hamburger" id="hamburgerBtn">Menu</button> <div id="sidebar-root"></div> <div class="doc-layout"> <main class="doc-main"> <div id="breadcrumb-root"></div> <h1>VectorDB Viewer</h1> <p class="subtitle"> Browse and inspect vector embeddings stored in ChromaDB — view records, metadata, and source distribution.
+ </p> <div class="callout callout-danger"> <div class="callout-title">Restricted Access</div> <p> The VectorDB Viewer is available only to <span class="badge badge-role-superadmin">superadmin</span>.
+ </p> </div> <!-- ============================================ --> <h2 id="overview">Overview</h2> <p> ChromaDB stores all vector embeddings that power the semantic search. The VectorDB Viewer
+ lets you inspect what's actually stored — useful for debugging search issues, verifying
+ data sync, and understanding the vector space.
+ </p> <div class="mermaid">
+flowchart LR
+ A[Documents] -->|Chunk + Embed| B[(ChromaDB)]
+ C[Pricing Records] -->|Sync| B
+ D[Product Specs] -->|Sync| B
+ B --> E[ VectorDB Viewer]
+ E --> F[Browse Records]
+ E --> G[View Metadata]
+ E --> H[Filter by Source]
+
+ style B fill:#8B5CF6,color:#fff
+ style E fill:#3B82F6,color:#fff
+ </div> <!-- ============================================ --> <h2 id="accessing">Accessing the Viewer</h2> <p>Access the VectorDB Viewer from two places:</p> <ul> <li><strong>Pricing Database</strong> → "View VectorDB" button (shows pricing vectors)</li> <li><strong>Product Specifications</strong> → "View VectorDB" button (shows spec vectors)</li> </ul> <!-- ============================================ --> <h2 id="collection-info">Collection Info</h2> <p>The top section shows overall ChromaDB collection statistics:</p> <ul> <li><strong>Collection name</strong> — The ChromaDB collection identifier</li> <li><strong>Total vectors</strong> — Number of embeddings stored</li> <li><strong>Embedding model</strong> — <code>cohere.embed-multilingual-v3</code></li> <li><strong>Dimensions</strong> — 1024</li> </ul> <!-- ============================================ --> <h2 id="browse-records">Browse Records</h2> <p> View a paginated list of all vector records with their content and metadata.
+ Each record shows:
+ </p> <table> <thead> <tr><th>Field</th><th>Description</th></tr> </thead> <tbody> <tr><td><strong>ID</strong></td><td>Unique vector record identifier</td></tr> <tr><td><strong>Content</strong></td><td>The text content that was embedded</td></tr> <tr><td><strong>Metadata</strong></td><td>Associated metadata (source document, chunk index, page number, etc.)</td></tr> <tr><td><strong>Source</strong></td><td>Origin of the vector (document name, pricing, product-spec)</td></tr> </tbody> </table> <div class="screenshot-wrapper"> <img src="" alt="VectorDB records" /> <div class="screenshot-placeholder"> <div class="ph-icon"></div> <div class="ph-label">Screenshot: VectorDB record list with content preview, metadata, and source filter</div> </div> </div> <!-- ============================================ --> <h2 id="filter-sources">Filter by Source</h2> <p> Use the source filter to view vectors from a specific origin. Sources include:
+ </p> <ul> <li><strong>Document names</strong> — vectors from uploaded files or ingested URLs</li> <li><strong>pricing</strong> — vectors from pricing database sync</li> <li><strong>product-spec</strong> — vectors from product spec sync</li> </ul> <p> The source list includes counts, so you can see how many vectors each source contributes.
+ </p> <!-- ============================================ --> <h2 id="record-detail">Record Detail</h2> <p>Click any record to view its full details:</p> <ul> <li><strong>Complete text content</strong> — the full chunk text</li> <li><strong>All metadata fields</strong> — source, document ID, chunk index, page number, etc.</li> <li><strong>Vector ID</strong> — the ChromaDB record identifier</li> </ul> <div class="screenshot-wrapper"> <img src="" alt="VectorDB record detail" /> <div class="screenshot-placeholder"> <div class="ph-icon"></div> <div class="ph-label">Screenshot: VectorDB record detail showing full content and metadata</div> </div> </div> <!-- ============================================ --> <h2 id="pagination">Pagination</h2> <p> Records are loaded in pages of up to <strong>200 records</strong> per page.
+ Use the pagination controls to navigate through large collections.
+ </p> <div id="page-nav-root"></div> </main> <aside class="doc-toc" id="toc-root"></aside> </div> <script src="../js/docs.js"></script>
+</body>
+</html>

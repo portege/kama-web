@@ -1,0 +1,549 @@
+<!DOCTYPE html>
+<html lang="en">
+<head> <meta charset="UTF-8" /> <meta name="viewport" content="width=device-width, initial-scale=1.0" /> <title>API Reference — BABEH Docs</title> <link rel="stylesheet" href="../css/docs.css" />
+<style>
+  .method { display:inline-block; font-size:11px; font-weight:700; padding:2px 8px; border-radius:4px; color:#fff; min-width:52px; text-align:center; margin-right:8px; letter-spacing:.4px; }
+  .method-get    { background:#22C55E; }
+  .method-post   { background:#3B82F6; }
+  .method-put    { background:#F59E0B; }
+  .method-delete { background:#EF4444; }
+  details.endpoint { border:1px solid var(--border-color,#e5e7eb); border-radius:8px; margin-bottom:10px; overflow:hidden; }
+  details.endpoint[open] { box-shadow:0 2px 8px rgba(0,0,0,.07); }
+  summary.endpoint-header { display:flex; align-items:center; padding:11px 16px; cursor:pointer; list-style:none; user-select:none; background:var(--bg-subtle,#f9fafb); }
+  summary.endpoint-header::-webkit-details-marker { display:none; }
+  summary.endpoint-header:hover { background:var(--bg-hover,#f3f4f6); }
+  .endpoint-path { font-family:monospace; font-size:13.5px; flex:1; }
+  .endpoint-desc-inline { font-size:12px; color:var(--text-muted,#6b7280); margin-left:12px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:300px; }
+  .chevron { margin-left:auto; font-size:11px; color:var(--text-muted,#9ca3af); transition:transform .2s; flex-shrink:0; padding-left:8px; }
+  details[open] .chevron { transform:rotate(90deg); }
+  .endpoint-body { padding:16px 20px; border-top:1px solid var(--border-color,#e5e7eb); font-size:13px; }
+  .endpoint-body > p:first-child { margin:0 0 12px; color:var(--text-muted,#6b7280); }
+  .endpoint-body h5 { margin:14px 0 6px; font-size:11px; text-transform:uppercase; letter-spacing:.07em; color:var(--text-muted,#9ca3af); font-weight:600; }
+  .field-table { width:100%; border-collapse:collapse; font-size:12.5px; margin-bottom:4px; }
+  .field-table th { background:var(--bg-subtle,#f3f4f6); text-align:left; padding:5px 10px; font-weight:600; border-bottom:1px solid var(--border-color,#e5e7eb); }
+  .field-table td { padding:5px 10px; border-bottom:1px solid var(--border-color,#f3f4f6); vertical-align:top; }
+  .req { color:#EF4444; font-weight:700; font-size:11px; }
+  .opt { color:#9CA3AF; font-size:11px; }
+  .payload-block { background:#1e1e2e; color:#cdd6f4; border-radius:6px; padding:12px 14px; font-family:monospace; font-size:12px; line-height:1.7; overflow-x:auto; margin-top:4px; }
+  .payload-block .k { color:#89b4fa; }
+  .payload-block .s { color:#a6e3a1; }
+  .payload-block .n { color:#fab387; }
+  .payload-block .c { color:#6c7086; font-style:italic; }
+  .response-codes { margin-top:12px; font-size:12.5px; }
+  .rc { display:inline-block; font-size:11px; font-weight:700; padding:2px 7px; border-radius:4px; margin-right:4px; }
+  .r200,.r201 { background:#D1FAE5; color:#065F46; }
+  .r400 { background:#FEE2E2; color:#991B1B; }
+  .r401 { background:#FEF3C7; color:#92400E; }
+  .r429 { background:#F3E8FF; color:#6B21A8; }
+</style>
+</head>
+<body> <button class="hamburger" id="hamburgerBtn">Menu</button> <div id="sidebar-root"></div> <div class="doc-layout"> <main class="doc-main"> <div id="breadcrumb-root"></div>
+
+<h1>API Reference</h1>
+<p class="subtitle">All BABEH REST API endpoints. Base URL: <code>/api</code>. Admin endpoints: <code>/api/admin</code>. Click any endpoint to expand details, fields, and sample payloads.</p>
+
+<!-- ============================================ -->
+<h2 id="authentication">Authentication</h2>
+<p>Public API endpoints require an <strong>API Key</strong> header:</p>
+<pre><code>X-API-Key: your_api_key_here</code></pre>
+<p>Admin endpoints require a <strong>JWT Bearer token</strong> from <code>POST /api/admin/login</code>:</p>
+<pre><code>Authorization: Bearer &lt;token&gt;</code></pre>
+<div class="callout callout-info">
+  <div class="callout-title">Interactive Docs</div>
+  <p>Auto-generated Swagger UI at <code>/docs</code> and ReDoc at <code>/redoc</code> are available when the server is running.</p>
+</div>
+
+<!-- ============================================ -->
+<h2 id="query">Query</h2>
+
+<details class="endpoint">
+  <summary class="endpoint-header">
+    <span class="method method-post">POST</span>
+    <span class="endpoint-path">/api/query</span>
+    <span class="endpoint-desc-inline">Submit a question, get a full JSON response</span>
+    <span class="chevron">▶</span>
+  </summary>
+  <div class="endpoint-body">
+    <p>Runs the full search pipeline and returns an LLM-generated answer with citations.</p>
+    <h5>Request Body (JSON)</h5>
+    <table class="field-table">
+      <thead><tr><th>Field</th><th>Type</th><th>Required</th><th>Description</th></tr></thead>
+      <tbody>
+        <tr><td><code>query</code></td><td>string</td><td><span class="req">Required</span></td><td>The user's natural-language question</td></tr>
+        <tr><td><code>search_type</code></td><td>string</td><td><span class="opt">Optional</span></td><td>Override search method: <code>hybrid</code>, <code>vector</code>, <code>bm25</code></td></tr>
+        <tr><td><code>top_k</code></td><td>integer</td><td><span class="opt">Optional</span></td><td>Max chunks to retrieve (default from admin settings)</td></tr>
+      </tbody>
+    </table>
+    <h5>Sample Request</h5>
+    <div class="payload-block">{
+  <span class="k">"query"</span>: <span class="s">"What are the features of Product X?"</span>,
+  <span class="k">"search_type"</span>: <span class="s">"hybrid"</span>,
+  <span class="k">"top_k"</span>: <span class="n">5</span>
+}</div>
+    <h5>Sample Response</h5>
+    <div class="payload-block">{
+  <span class="k">"query"</span>: <span class="s">"What are the features of Product X?"</span>,
+  <span class="k">"llm_response"</span>: <span class="s">"Product X includes features A, B, and C [1]."</span>,
+  <span class="k">"results"</span>: [ <span class="c">/* search hit objects */</span> ],
+  <span class="k">"total_results"</span>: <span class="n">3</span>,
+  <span class="k">"processing_time"</span>: <span class="n">0.42</span>,
+  <span class="k">"search_type"</span>: <span class="s">"hybrid"</span>
+}</div>
+    <div class="response-codes"><span class="rc r200">200 OK</span> <span class="rc r400">400 Query too long</span> <span class="rc r401">401 Missing API key</span> <span class="rc r429">429 Quota exceeded</span></div>
+  </div>
+</details>
+
+<details class="endpoint">
+  <summary class="endpoint-header">
+    <span class="method method-post">POST</span>
+    <span class="endpoint-path">/api/query/stream</span>
+    <span class="endpoint-desc-inline">Streaming query via Server-Sent Events</span>
+    <span class="chevron">▶</span>
+  </summary>
+  <div class="endpoint-body">
+    <p>Same pipeline as <code>/query</code> but streams the LLM response token-by-token. Returns <code>text/event-stream</code>.</p>
+    <h5>Request Body (JSON)</h5>
+    <table class="field-table">
+      <thead><tr><th>Field</th><th>Type</th><th>Required</th><th>Description</th></tr></thead>
+      <tbody>
+        <tr><td><code>query</code></td><td>string</td><td><span class="req">Required</span></td><td>The user's question</td></tr>
+        <tr><td><code>search_type</code></td><td>string</td><td><span class="opt">Optional</span></td><td>Override search method</td></tr>
+      </tbody>
+    </table>
+    <h5>Sample Request</h5>
+    <div class="payload-block">{ <span class="k">"query"</span>: <span class="s">"Tell me about the return policy"</span> }</div>
+    <h5>Stream Event Types</h5>
+    <table class="field-table">
+      <thead><tr><th>Event type</th><th>Description</th></tr></thead>
+      <tbody>
+        <tr><td><code>search_results</code></td><td>Search phase completed, result list included</td></tr>
+        <tr><td><code>llm_chunk</code></td><td>A text token from the LLM response</td></tr>
+        <tr><td><code>cited_sources</code></td><td>Citation metadata after streaming ends</td></tr>
+        <tr><td><code>done</code></td><td>Stream complete</td></tr>
+      </tbody>
+    </table>
+    <div class="response-codes"><span class="rc r200">200 SSE stream</span> <span class="rc r400">400 Query too long</span> <span class="rc r429">429 Quota exceeded</span></div>
+  </div>
+</details>
+
+<!-- ============================================ -->
+<h2 id="documents">Documents</h2>
+
+<details class="endpoint">
+  <summary class="endpoint-header"><span class="method method-post">POST</span><span class="endpoint-path">/api/upload</span><span class="endpoint-desc-inline">Upload and ingest a PDF or TXT file</span><span class="chevron">▶</span></summary>
+  <div class="endpoint-body">
+    <p>Chunks, embeds, and indexes the file into Vector DB and BM25.</p>
+    <h5>Request (multipart/form-data)</h5>
+    <table class="field-table"><thead><tr><th>Field</th><th>Type</th><th>Required</th><th>Description</th></tr></thead><tbody>
+      <tr><td><code>file</code></td><td>File</td><td><span class="req">Required</span></td><td>PDF or TXT file to ingest</td></tr>
+    </tbody></table>
+    <h5>Sample Response</h5>
+    <div class="payload-block">{
+  <span class="k">"success"</span>: <span class="n">true</span>,
+  <span class="k">"document_id"</span>: <span class="n">42</span>,
+  <span class="k">"filename"</span>: <span class="s">"product-manual.pdf"</span>,
+  <span class="k">"chunks_created"</span>: <span class="n">18</span>,
+  <span class="k">"message"</span>: <span class="s">"Document uploaded and processed successfully"</span>
+}</div>
+    <div class="response-codes"><span class="rc r200">200 OK</span> <span class="rc r400">400 Invalid file</span></div>
+  </div>
+</details>
+
+<details class="endpoint">
+  <summary class="endpoint-header"><span class="method method-post">POST</span><span class="endpoint-path">/api/ingest-url</span><span class="endpoint-desc-inline">Scrape and ingest content from a URL</span><span class="chevron">▶</span></summary>
+  <div class="endpoint-body">
+    <p>Fetches a public URL, extracts text, chunks and indexes it like a document.</p>
+    <h5>Request (multipart/form-data)</h5>
+    <table class="field-table"><thead><tr><th>Field</th><th>Type</th><th>Required</th><th>Description</th></tr></thead><tbody>
+      <tr><td><code>url</code></td><td>string</td><td><span class="req">Required</span></td><td>Public HTTP/HTTPS URL to ingest</td></tr>
+    </tbody></table>
+    <h5>Sample Response</h5>
+    <div class="payload-block">{
+  <span class="k">"success"</span>: <span class="n">true</span>,
+  <span class="k">"document_id"</span>: <span class="n">43</span>,
+  <span class="k">"title"</span>: <span class="s">"Product Landing Page"</span>,
+  <span class="k">"url"</span>: <span class="s">"https://example.com/product"</span>,
+  <span class="k">"chunks_created"</span>: <span class="n">7</span>
+}</div>
+  </div>
+</details>
+
+<details class="endpoint">
+  <summary class="endpoint-header"><span class="method method-get">GET</span><span class="endpoint-path">/api/documents</span><span class="endpoint-desc-inline">List all ingested documents</span><span class="chevron">▶</span></summary>
+  <div class="endpoint-body">
+    <p>Returns all documents with metadata: filename, file type, chunk count, upload date.</p>
+    <h5>Sample Response</h5>
+    <div class="payload-block">[ {
+  <span class="k">"id"</span>: <span class="n">42</span>, <span class="k">"filename"</span>: <span class="s">"product-manual.pdf"</span>,
+  <span class="k">"file_type"</span>: <span class="s">".pdf"</span>, <span class="k">"chunk_count"</span>: <span class="n">18</span>,
+  <span class="k">"created_at"</span>: <span class="s">"2026-04-01T10:00:00Z"</span>
+} ]</div>
+  </div>
+</details>
+
+<details class="endpoint">
+  <summary class="endpoint-header"><span class="method method-get">GET</span><span class="endpoint-path">/api/documents/{doc_id}</span><span class="endpoint-desc-inline">Get metadata for a single document</span><span class="chevron">▶</span></summary>
+  <div class="endpoint-body">
+    <h5>Path Parameters</h5>
+    <table class="field-table"><thead><tr><th>Parameter</th><th>Type</th><th>Description</th></tr></thead><tbody>
+      <tr><td><code>doc_id</code></td><td>integer</td><td>Document ID</td></tr>
+    </tbody></table>
+  </div>
+</details>
+
+<details class="endpoint">
+  <summary class="endpoint-header"><span class="method method-get">GET</span><span class="endpoint-path">/api/documents/{doc_id}/content</span><span class="endpoint-desc-inline">Retrieve raw text chunks for a document</span><span class="chevron">▶</span></summary>
+  <div class="endpoint-body"><p>Returns all stored text chunks for the given document ID.</p></div>
+</details>
+
+<details class="endpoint">
+  <summary class="endpoint-header"><span class="method method-put">PUT</span><span class="endpoint-path">/api/documents/{doc_id}</span><span class="endpoint-desc-inline">Update document metadata</span><span class="chevron">▶</span></summary>
+  <div class="endpoint-body">
+    <p>Updates a document's display label. Does not re-process or re-embed the file.</p>
+    <h5>Request Body (JSON)</h5>
+    <table class="field-table"><thead><tr><th>Field</th><th>Type</th><th>Required</th><th>Description</th></tr></thead><tbody>
+      <tr><td><code>filename</code></td><td>string</td><td><span class="opt">Optional</span></td><td>New display name for the document</td></tr>
+    </tbody></table>
+  </div>
+</details>
+
+<details class="endpoint">
+  <summary class="endpoint-header"><span class="method method-delete">DELETE</span><span class="endpoint-path">/api/documents/{doc_id}</span><span class="endpoint-desc-inline">Delete a document and all its chunks</span><span class="chevron">▶</span></summary>
+  <div class="endpoint-body"><p>Permanently removes the document and all associated chunks from Vector DB and BM25 index.</p></div>
+</details>
+
+<!-- ============================================ -->
+<h2 id="pricing">Pricing</h2>
+
+<details class="endpoint">
+  <summary class="endpoint-header"><span class="method method-get">GET</span><span class="endpoint-path">/api/pricing</span><span class="endpoint-desc-inline">List pricing records</span><span class="chevron">▶</span></summary>
+  <div class="endpoint-body">
+    <h5>Query Parameters</h5>
+    <table class="field-table"><thead><tr><th>Param</th><th>Type</th><th>Description</th></tr></thead><tbody>
+      <tr><td><code>search</code></td><td>string</td><td>Filter by product name or SKU</td></tr>
+      <tr><td><code>category</code></td><td>string</td><td>Filter by category</td></tr>
+      <tr><td><code>limit</code></td><td>integer</td><td>Max records to return (default 50)</td></tr>
+      <tr><td><code>offset</code></td><td>integer</td><td>Pagination offset</td></tr>
+    </tbody></table>
+  </div>
+</details>
+
+<details class="endpoint">
+  <summary class="endpoint-header"><span class="method method-get">GET</span><span class="endpoint-path">/api/pricing/stats</span><span class="endpoint-desc-inline">Aggregate pricing statistics</span><span class="chevron">▶</span></summary>
+  <div class="endpoint-body">
+    <h5>Sample Response</h5>
+    <div class="payload-block">{
+  <span class="k">"total_records"</span>: <span class="n">120</span>, <span class="k">"total_categories"</span>: <span class="n">8</span>,
+  <span class="k">"min_price"</span>: <span class="n">50000</span>, <span class="k">"max_price"</span>: <span class="n">5000000</span>,
+  <span class="k">"last_updated"</span>: <span class="s">"2026-04-20T08:00:00Z"</span>
+}</div>
+  </div>
+</details>
+
+<details class="endpoint">
+  <summary class="endpoint-header"><span class="method method-get">GET</span><span class="endpoint-path">/api/pricing/categories</span><span class="endpoint-desc-inline">List all pricing categories</span><span class="chevron">▶</span></summary>
+  <div class="endpoint-body">
+    <h5>Sample Response</h5>
+    <div class="payload-block">[ <span class="s">"Electronics"</span>, <span class="s">"Furniture"</span>, <span class="s">"Accessories"</span> ]</div>
+  </div>
+</details>
+
+<details class="endpoint">
+  <summary class="endpoint-header"><span class="method method-get">GET</span><span class="endpoint-path">/api/pricing/{record_id}</span><span class="endpoint-desc-inline">Get a single pricing record</span><span class="chevron">▶</span></summary>
+  <div class="endpoint-body">
+    <h5>Path Parameters</h5>
+    <table class="field-table"><thead><tr><th>Parameter</th><th>Type</th><th>Description</th></tr></thead><tbody>
+      <tr><td><code>record_id</code></td><td>integer</td><td>Pricing record ID</td></tr>
+    </tbody></table>
+  </div>
+</details>
+
+<details class="endpoint">
+  <summary class="endpoint-header"><span class="method method-post">POST</span><span class="endpoint-path">/api/pricing</span><span class="endpoint-desc-inline">Create a new pricing record</span><span class="chevron">▶</span></summary>
+  <div class="endpoint-body">
+    <p>Returns <code>201 Created</code> on success.</p>
+    <h5>Request Body (JSON)</h5>
+    <table class="field-table"><thead><tr><th>Field</th><th>Type</th><th>Required</th><th>Description</th></tr></thead><tbody>
+      <tr><td><code>product_name</code></td><td>string</td><td><span class="req">Required</span></td><td>Product display name</td></tr>
+      <tr><td><code>price</code></td><td>number</td><td><span class="req">Required</span></td><td>Price value</td></tr>
+      <tr><td><code>currency</code></td><td>string</td><td><span class="opt">Optional</span></td><td>Currency code, default <code>IDR</code></td></tr>
+      <tr><td><code>unit</code></td><td>string</td><td><span class="opt">Optional</span></td><td>Unit label, e.g. <code>unit</code>, <code>kg</code></td></tr>
+      <tr><td><code>sku</code></td><td>string</td><td><span class="opt">Optional</span></td><td>Product SKU</td></tr>
+      <tr><td><code>category</code></td><td>string</td><td><span class="opt">Optional</span></td><td>Product category</td></tr>
+      <tr><td><code>description</code></td><td>string</td><td><span class="opt">Optional</span></td><td>Short description</td></tr>
+      <tr><td><code>stock</code></td><td>integer</td><td><span class="opt">Optional</span></td><td>Available stock quantity</td></tr>
+    </tbody></table>
+    <h5>Sample Request</h5>
+    <div class="payload-block">{
+  <span class="k">"product_name"</span>: <span class="s">"Wireless Headphones Pro"</span>,
+  <span class="k">"price"</span>: <span class="n">1250000</span>, <span class="k">"currency"</span>: <span class="s">"IDR"</span>,
+  <span class="k">"sku"</span>: <span class="s">"WHP-001"</span>, <span class="k">"category"</span>: <span class="s">"Electronics"</span>, <span class="k">"stock"</span>: <span class="n">50</span>
+}</div>
+    <div class="response-codes"><span class="rc r201">201 Created</span> <span class="rc r400">400 Validation error</span></div>
+  </div>
+</details>
+
+<details class="endpoint">
+  <summary class="endpoint-header"><span class="method method-put">PUT</span><span class="endpoint-path">/api/pricing/{record_id}</span><span class="endpoint-desc-inline">Update a pricing record</span><span class="chevron">▶</span></summary>
+  <div class="endpoint-body">
+    <p>All fields are optional. Only provided fields are updated.</p>
+    <h5>Sample Request</h5>
+    <div class="payload-block">{ <span class="k">"price"</span>: <span class="n">1100000</span>, <span class="k">"stock"</span>: <span class="n">35</span> }</div>
+  </div>
+</details>
+
+<details class="endpoint">
+  <summary class="endpoint-header"><span class="method method-delete">DELETE</span><span class="endpoint-path">/api/pricing/{record_id}</span><span class="endpoint-desc-inline">Delete a single pricing record</span><span class="chevron">▶</span></summary>
+  <div class="endpoint-body"><p>Permanently deletes the pricing record with the given ID.</p></div>
+</details>
+
+<details class="endpoint">
+  <summary class="endpoint-header"><span class="method method-delete">DELETE</span><span class="endpoint-path">/api/pricing/truncate</span><span class="endpoint-desc-inline">Delete ALL pricing records</span><span class="chevron">▶</span></summary>
+  <div class="endpoint-body"><div class="callout callout-warning" style="margin:0"><div class="callout-title">Destructive</div><p>Deletes <strong>all</strong> pricing records. Irreversible.</p></div></div>
+</details>
+
+<details class="endpoint">
+  <summary class="endpoint-header"><span class="method method-post">POST</span><span class="endpoint-path">/api/pricing/search</span><span class="endpoint-desc-inline">Full-text search pricing records</span><span class="chevron">▶</span></summary>
+  <div class="endpoint-body">
+    <h5>Request Body (JSON)</h5>
+    <table class="field-table"><thead><tr><th>Field</th><th>Type</th><th>Required</th><th>Description</th></tr></thead><tbody>
+      <tr><td><code>query</code></td><td>string</td><td><span class="req">Required</span></td><td>Search term</td></tr>
+      <tr><td><code>limit</code></td><td>integer</td><td><span class="opt">Optional</span></td><td>Max results (default 10)</td></tr>
+    </tbody></table>
+    <h5>Sample Request</h5>
+    <div class="payload-block">{ <span class="k">"query"</span>: <span class="s">"wireless headphones"</span>, <span class="k">"limit"</span>: <span class="n">5</span> }</div>
+  </div>
+</details>
+
+<details class="endpoint">
+  <summary class="endpoint-header"><span class="method method-post">POST</span><span class="endpoint-path">/api/pricing/import-csv</span><span class="endpoint-desc-inline">Bulk import pricing from CSV</span><span class="chevron">▶</span></summary>
+  <div class="endpoint-body">
+    <p>Expected columns: <code>product_name</code>, <code>price</code>, <code>currency</code>, <code>unit</code>, <code>sku</code>, <code>category</code>, <code>description</code>, <code>stock</code>.</p>
+    <h5>Request (multipart/form-data)</h5>
+    <table class="field-table"><thead><tr><th>Field</th><th>Type</th><th>Required</th></tr></thead><tbody>
+      <tr><td><code>file</code></td><td>File (.csv)</td><td><span class="req">Required</span></td></tr>
+    </tbody></table>
+  </div>
+</details>
+
+<details class="endpoint">
+  <summary class="endpoint-header"><span class="method method-post">POST</span><span class="endpoint-path">/api/pricing/import-json</span><span class="endpoint-desc-inline">Bulk import pricing from JSON</span><span class="chevron">▶</span></summary>
+  <div class="endpoint-body">
+    <p>Upload a JSON file containing an array of pricing objects.</p>
+    <h5>Sample JSON structure</h5>
+    <div class="payload-block">[ { <span class="k">"product_name"</span>: <span class="s">"Item A"</span>, <span class="k">"price"</span>: <span class="n">500000</span>, <span class="k">"category"</span>: <span class="s">"Electronics"</span> } ]</div>
+  </div>
+</details>
+
+<details class="endpoint">
+  <summary class="endpoint-header"><span class="method method-get">GET</span><span class="endpoint-path">/api/pricing/export</span><span class="endpoint-desc-inline">Export all pricing records as JSON</span><span class="chevron">▶</span></summary>
+  <div class="endpoint-body"><p>Downloads all pricing records as a JSON file.</p></div>
+</details>
+
+<details class="endpoint">
+  <summary class="endpoint-header"><span class="method method-get">GET</span><span class="endpoint-path">/api/pricing/export-csv</span><span class="endpoint-desc-inline">Export all pricing records as CSV</span><span class="chevron">▶</span></summary>
+  <div class="endpoint-body"><p>Downloads all pricing records as a CSV file attachment.</p></div>
+</details>
+
+<details class="endpoint">
+  <summary class="endpoint-header"><span class="method method-post">POST</span><span class="endpoint-path">/api/pricing/sync-vectordb</span><span class="endpoint-desc-inline">Sync pricing into Vector DB</span><span class="chevron">▶</span></summary>
+  <div class="endpoint-body"><p>Re-embeds all pricing records into Vector DB for semantic search. Run after bulk imports.</p></div>
+</details>
+
+<!-- ============================================ -->
+<h2 id="product-specs">Product Specs</h2>
+
+<details class="endpoint">
+  <summary class="endpoint-header"><span class="method method-get">GET</span><span class="endpoint-path">/api/product-specs</span><span class="endpoint-desc-inline">List product spec records</span><span class="chevron">▶</span></summary>
+  <div class="endpoint-body">
+    <h5>Query Parameters</h5>
+    <table class="field-table"><thead><tr><th>Param</th><th>Type</th><th>Description</th></tr></thead><tbody>
+      <tr><td><code>search</code></td><td>string</td><td>Full-text filter</td></tr>
+      <tr><td><code>brand</code></td><td>string</td><td>Filter by brand</td></tr>
+      <tr><td><code>body_type</code></td><td>string</td><td>Filter by body type / category</td></tr>
+      <tr><td><code>limit</code></td><td>integer</td><td>Max records (default 50)</td></tr>
+      <tr><td><code>offset</code></td><td>integer</td><td>Pagination offset</td></tr>
+    </tbody></table>
+  </div>
+</details>
+
+<details class="endpoint">
+  <summary class="endpoint-header"><span class="method method-get">GET</span><span class="endpoint-path">/api/product-specs/stats</span><span class="endpoint-desc-inline">Aggregate stats for product specs</span><span class="chevron">▶</span></summary>
+  <div class="endpoint-body">
+    <h5>Sample Response</h5>
+    <div class="payload-block">{
+  <span class="k">"total_records"</span>: <span class="n">85</span>, <span class="k">"total_brands"</span>: <span class="n">12</span>,
+  <span class="k">"total_models"</span>: <span class="n">40</span>, <span class="k">"last_updated"</span>: <span class="s">"2026-04-18T12:00:00Z"</span>
+}</div>
+  </div>
+</details>
+
+<details class="endpoint">
+  <summary class="endpoint-header"><span class="method method-get">GET</span><span class="endpoint-path">/api/product-specs/brands</span><span class="endpoint-desc-inline">List all distinct brands</span><span class="chevron">▶</span></summary>
+  <div class="endpoint-body">
+    <h5>Sample Response</h5>
+    <div class="payload-block">[ <span class="s">"BrandA"</span>, <span class="s">"BrandB"</span>, <span class="s">"BrandC"</span> ]</div>
+  </div>
+</details>
+
+<details class="endpoint">
+  <summary class="endpoint-header"><span class="method method-get">GET</span><span class="endpoint-path">/api/product-specs/body-types</span><span class="endpoint-desc-inline">List all distinct body/category types</span><span class="chevron">▶</span></summary>
+  <div class="endpoint-body">
+    <h5>Sample Response</h5>
+    <div class="payload-block">[ <span class="s">"TypeA"</span>, <span class="s">"TypeB"</span> ]</div>
+  </div>
+</details>
+
+<details class="endpoint">
+  <summary class="endpoint-header"><span class="method method-get">GET</span><span class="endpoint-path">/api/product-specs/{record_id}</span><span class="endpoint-desc-inline">Get a single product spec record</span><span class="chevron">▶</span></summary>
+  <div class="endpoint-body">
+    <h5>Path Parameters</h5>
+    <table class="field-table"><thead><tr><th>Parameter</th><th>Type</th><th>Description</th></tr></thead><tbody>
+      <tr><td><code>record_id</code></td><td>integer</td><td>Product spec record ID</td></tr>
+    </tbody></table>
+  </div>
+</details>
+
+<details class="endpoint">
+  <summary class="endpoint-header"><span class="method method-post">POST</span><span class="endpoint-path">/api/product-specs</span><span class="endpoint-desc-inline">Create a new product spec record</span><span class="chevron">▶</span></summary>
+  <div class="endpoint-body">
+    <p>Returns <code>201 Created</code>. Field names depend on your configured schema.</p>
+    <h5>Sample Request</h5>
+    <div class="payload-block">{
+  <span class="k">"brand"</span>: <span class="s">"BrandA"</span>, <span class="k">"model"</span>: <span class="s">"Model X"</span>,
+  <span class="k">"variant"</span>: <span class="s">"Pro"</span>, <span class="k">"year"</span>: <span class="n">2026</span>
+  <span class="c">/* ...additional schema fields... */</span>
+}</div>
+    <div class="response-codes"><span class="rc r201">201 Created</span> <span class="rc r400">400 Validation error</span></div>
+  </div>
+</details>
+
+<details class="endpoint">
+  <summary class="endpoint-header"><span class="method method-put">PUT</span><span class="endpoint-path">/api/product-specs/{record_id}</span><span class="endpoint-desc-inline">Update a product spec record</span><span class="chevron">▶</span></summary>
+  <div class="endpoint-body">
+    <p>All fields are optional. Only provided fields are updated.</p>
+    <h5>Sample Request</h5>
+    <div class="payload-block">{ <span class="k">"variant"</span>: <span class="s">"Pro Max"</span>, <span class="k">"year"</span>: <span class="n">2026</span> }</div>
+  </div>
+</details>
+
+<details class="endpoint">
+  <summary class="endpoint-header"><span class="method method-delete">DELETE</span><span class="endpoint-path">/api/product-specs/{record_id}</span><span class="endpoint-desc-inline">Delete a single product spec record</span><span class="chevron">▶</span></summary>
+  <div class="endpoint-body"><p>Permanently removes the spec record with the given ID.</p></div>
+</details>
+
+<details class="endpoint">
+  <summary class="endpoint-header"><span class="method method-delete">DELETE</span><span class="endpoint-path">/api/product-specs/truncate</span><span class="endpoint-desc-inline">Delete ALL product spec records</span><span class="chevron">▶</span></summary>
+  <div class="endpoint-body"><div class="callout callout-warning" style="margin:0"><div class="callout-title">Destructive</div><p>Deletes <strong>all</strong> product spec records. Irreversible.</p></div></div>
+</details>
+
+<details class="endpoint">
+  <summary class="endpoint-header"><span class="method method-delete">DELETE</span><span class="endpoint-path">/api/product-specs/bulk-delete</span><span class="endpoint-desc-inline">Delete multiple spec records by ID</span><span class="chevron">▶</span></summary>
+  <div class="endpoint-body">
+    <h5>Request Body (JSON)</h5>
+    <table class="field-table"><thead><tr><th>Field</th><th>Type</th><th>Required</th><th>Description</th></tr></thead><tbody>
+      <tr><td><code>ids</code></td><td>array of integers</td><td><span class="req">Required</span></td><td>List of record IDs to delete</td></tr>
+    </tbody></table>
+    <h5>Sample Request</h5>
+    <div class="payload-block">{ <span class="k">"ids"</span>: [ <span class="n">1</span>, <span class="n">4</span>, <span class="n">7</span> ] }</div>
+  </div>
+</details>
+
+<details class="endpoint">
+  <summary class="endpoint-header"><span class="method method-post">POST</span><span class="endpoint-path">/api/product-specs/search</span><span class="endpoint-desc-inline">Search product spec records</span><span class="chevron">▶</span></summary>
+  <div class="endpoint-body">
+    <h5>Request Body (JSON)</h5>
+    <table class="field-table"><thead><tr><th>Field</th><th>Type</th><th>Required</th><th>Description</th></tr></thead><tbody>
+      <tr><td><code>query</code></td><td>string</td><td><span class="req">Required</span></td><td>Search term</td></tr>
+      <tr><td><code>limit</code></td><td>integer</td><td><span class="opt">Optional</span></td><td>Max results</td></tr>
+    </tbody></table>
+  </div>
+</details>
+
+<details class="endpoint">
+  <summary class="endpoint-header"><span class="method method-post">POST</span><span class="endpoint-path">/api/product-specs/import-json</span><span class="endpoint-desc-inline">Bulk import from JSON</span><span class="chevron">▶</span></summary>
+  <div class="endpoint-body">
+    <p>Upload a JSON file containing an array of spec objects matching your schema.</p>
+    <h5>Request (multipart/form-data)</h5>
+    <table class="field-table"><thead><tr><th>Field</th><th>Type</th><th>Required</th></tr></thead><tbody>
+      <tr><td><code>file</code></td><td>File (.json)</td><td><span class="req">Required</span></td></tr>
+    </tbody></table>
+  </div>
+</details>
+
+<details class="endpoint">
+  <summary class="endpoint-header"><span class="method method-post">POST</span><span class="endpoint-path">/api/product-specs/import-csv</span><span class="endpoint-desc-inline">Bulk import from CSV</span><span class="chevron">▶</span></summary>
+  <div class="endpoint-body">
+    <h5>Request (multipart/form-data)</h5>
+    <table class="field-table"><thead><tr><th>Field</th><th>Type</th><th>Required</th></tr></thead><tbody>
+      <tr><td><code>file</code></td><td>File (.csv)</td><td><span class="req">Required</span></td></tr>
+    </tbody></table>
+  </div>
+</details>
+
+<details class="endpoint">
+  <summary class="endpoint-header"><span class="method method-post">POST</span><span class="endpoint-path">/api/product-specs/import-excel</span><span class="endpoint-desc-inline">Bulk import from Excel</span><span class="chevron">▶</span></summary>
+  <div class="endpoint-body">
+    <h5>Request (multipart/form-data)</h5>
+    <table class="field-table"><thead><tr><th>Field</th><th>Type</th><th>Required</th></tr></thead><tbody>
+      <tr><td><code>file</code></td><td>File (.xlsx)</td><td><span class="req">Required</span></td></tr>
+    </tbody></table>
+  </div>
+</details>
+
+<details class="endpoint">
+  <summary class="endpoint-header"><span class="method method-post">POST</span><span class="endpoint-path">/api/product-specs/sync-vectordb</span><span class="endpoint-desc-inline">Sync product specs into Vector DB</span><span class="chevron">▶</span></summary>
+  <div class="endpoint-body"><p>Re-embeds all product spec records into Vector DB for semantic search. Run after bulk imports.</p></div>
+</details>
+
+<!-- ============================================ -->
+<h2 id="collections">Collections &amp; Settings</h2>
+
+<details class="endpoint">
+  <summary class="endpoint-header"><span class="method method-get">GET</span><span class="endpoint-path">/api/collections</span><span class="endpoint-desc-inline">Vector DB collection info</span><span class="chevron">▶</span></summary>
+  <div class="endpoint-body">
+    <h5>Sample Response</h5>
+    <div class="payload-block">{
+  <span class="k">"name"</span>: <span class="s">"kbaas_collection"</span>,
+  <span class="k">"count"</span>: <span class="n">512</span>,
+  <span class="k">"embedding_dimension"</span>: <span class="n">1024</span>
+}</div>
+  </div>
+</details>
+
+<details class="endpoint">
+  <summary class="endpoint-header"><span class="method method-get">GET</span><span class="endpoint-path">/api/settings</span><span class="endpoint-desc-inline">Get current system settings</span><span class="chevron">▶</span></summary>
+  <div class="endpoint-body"><p>Returns the current admin-configured settings: LLM provider, search method, relevance threshold, Top K, etc.</p></div>
+</details>
+
+<details class="endpoint">
+  <summary class="endpoint-header"><span class="method method-post">POST</span><span class="endpoint-path">/api/settings</span><span class="endpoint-desc-inline">Update system settings</span><span class="chevron">▶</span></summary>
+  <div class="endpoint-body">
+    <p>Accepts a partial or full settings object. Only provided fields are updated.</p>
+    <h5>Sample Request</h5>
+    <div class="payload-block">{
+  <span class="k">"llm_provider"</span>: <span class="s">"gemini"</span>,
+  <span class="k">"search_method"</span>: <span class="s">"hybrid"</span>,
+  <span class="k">"relevance_threshold"</span>: <span class="n">0.3</span>,
+  <span class="k">"top_k"</span>: <span class="n">5</span>
+}</div>
+  </div>
+</details>
+
+<!-- ============================================ -->
+<h2 id="error-codes">Error Codes</h2>
+<table>
+  <thead><tr><th>HTTP Status</th><th>Meaning</th></tr></thead>
+  <tbody>
+    <tr><td><code>400</code></td><td>Bad Request — invalid input (e.g. query too long, unsupported file type)</td></tr>
+    <tr><td><code>401</code></td><td>Unauthorized — API key missing</td></tr>
+    <tr><td><code>403</code></td><td>Forbidden — invalid API key or insufficient role</td></tr>
+    <tr><td><code>404</code></td><td>Not Found — resource does not exist</td></tr>
+    <tr><td><code>429</code></td><td>Too Many Requests — monthly query quota exceeded (Starter plan)</td></tr>
+    <tr><td><code>500</code></td><td>Internal Server Error — unexpected backend failure</td></tr>
+  </tbody>
+</table>
+
+<div id="page-nav-root"></div> </main> <aside class="doc-toc" id="toc-root"></aside> </div> <script src="../js/docs.js"></script>
+</body>
+</html>

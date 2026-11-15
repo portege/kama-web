@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head> <meta charset="UTF-8" /> <meta name="viewport" content="width=device-width, initial-scale=1.0" /> <title>Architecture — BABEH Docs</title> <link rel="stylesheet" href="../css/docs.css" />
+</head>
+<body> <button class="hamburger" id="hamburgerBtn">Menu</button> <div id="sidebar-root"></div> <div class="doc-layout"> <main class="doc-main"> <div id="breadcrumb-root"></div> <h1>Architecture</h1> <p class="subtitle"> A technical overview of BABEH's system design — from data ingestion and storage to the search pipeline and LLM response layer. </p>
+
+<!-- ============================================ -->
+<h2 id="overview">System Overview</h2>
+<p> BABEH is a modular, API-first knowledge base platform. Each component is independently replaceable, making it straightforward to swap vector stores, language models, or deployment targets without rewiring the core logic. </p>
+
+<div class="mermaid">
+flowchart TB
+  subgraph Client["Client Layer"]
+    W["Widget / Frontend"]
+    A["Admin Dashboard"]
+  end
+
+  subgraph API["API Layer (FastAPI)"]
+    R["Router / Auth"]
+    IQ["Intent Router"]
+    QD["Query Decomposer"]
+    LS["LLM Service<br/>(Bedrock / Gemini)"]
+  end
+
+  subgraph Data["Data Layer"]
+    VDB["Vector DB"]
+    FTS["BM25 / FTS5<br/>(SQL DB)"]
+    PDB["Pricing DB<br/>(SQL DB)"]
+    SDB["Product Specs DB<br/>(SQL DB)"]
+    FIN["Financing Rates<br/>(SQL DB)"]
+  end
+
+  subgraph Ingest["Ingestion Pipeline"]
+    FP["File Processor<br/>(PDF / TXT / URL)"]
+    CK["Chunker"]
+    EM["Embedder<br/>(Cohere)"]
+  end
+
+  W --> R
+  A --> R
+  R --> IQ
+  IQ --> QD
+  QD --> VDB
+  QD --> FTS
+  IQ --> PDB
+  IQ --> SDB
+  IQ --> FIN
+  VDB --> LS
+  FTS --> LS
+  PDB --> LS
+  SDB --> LS
+  FIN --> LS
+  FP --> CK --> EM --> VDB
+  FP --> CK --> FTS
+
+  style Client fill:#3B82F6,color:#fff
+  style API fill:#8B5CF6,color:#fff
+  style Data fill:#F59E0B,color:#fff
+  style Ingest fill:#22C55E,color:#fff
+</div>
+
+<!-- ============================================ -->
+<h2 id="components">Key Components</h2>
+<table>
+  <thead><tr><th>Component</th><th>Role</th></tr></thead>
+  <tbody>
+    <tr><td><strong>API Layer</strong></td><td>Handles all REST + SSE endpoints, authentication, and request routing</td></tr>
+    <tr><td><strong>Vector DB</strong></td><td>Stores document embeddings for semantic search</td></tr>
+    <tr><td><strong>BM25 / FTS5</strong></td><td>Full-text keyword search index</td></tr>
+    <tr><td><strong>Embedder</strong></td><td>Converts text to 1024-dim vectors; supports 100+ languages</td></tr>
+    <tr><td><strong>LLM</strong></td><td>Generates natural-language answers grounded in retrieved context</td></tr>
+    <tr><td><strong>Intent Router</strong></td><td>Determines which data sources to query for each request</td></tr>
+    <tr><td><strong>Admin Dashboard</strong></td><td>Manages documents, pricing, specs, users, and settings. See <a href="settings.html">Setting</a> for configuration options.</td></tr>
+  </tbody>
+</table>
+
+<!-- ============================================ -->
+<h2 id="data-flow">Data Flow</h2>
+<h3 id="ingestion-flow">Document Ingestion</h3>
+<div class="mermaid">
+sequenceDiagram
+  participant U as Admin
+  participant API as API Layer
+  participant CK as Chunker
+  participant EM as Embedder (Cohere)
+  participant VDB as Vector DB
+  participant FTS as BM25 / FTS5
+
+  U->>API: Upload PDF / TXT / URL
+  API->>CK: Extract & split into chunks
+  CK->>EM: Embed each chunk
+  EM-->>VDB: Store vectors
+  CK-->>FTS: Index text for BM25
+  API-->>U: ✓ Document processed
+</div>
+
+<h3 id="query-flow">Query Flow</h3>
+<div class="mermaid">
+sequenceDiagram
+  participant U as End User
+  participant API as API Layer
+  participant IR as Intent Router
+  participant DB as Data Sources
+  participant LLM as LLM
+
+  U->>API: Submit query
+  API->>IR: Classify intent
+  IR->>DB: Search relevant sources (KB / Pricing / Specs / Financing)
+  DB-->>API: Ranked results
+  API->>LLM: Query + numbered context
+  LLM-->>U: Answer with citations [1][2]
+</div>
+
+<!-- ============================================ -->
+<h2 id="multi-region">Multi-Region Deployment <span style="background:#7C3AED;color:#fff;font-size:11px;padding:2px 8px;border-radius:12px;vertical-align:middle;margin-left:6px;">Enterprise</span></h2>
+<p> On the <strong>Enterprise</strong> plan, BABEH can be deployed across <strong>multiple geographic regions</strong> simultaneously. Each region runs a fully independent BABEH instance with its own API layer and data stores, fronted by a global load balancer or DNS-based routing. </p>
+
+<div class="callout callout-warning">
+  <div class="callout-title">Enterprise Feature</div>
+  <p>Multi-region deployment is available on the <strong>Enterprise</strong> plan only. Contact your account manager for provisioning and architecture guidance.</p>
+</div>
+
+<h3 id="multi-region-diagram">Multi-Region Architecture</h3>
+<div class="mermaid">
+flowchart TB
+  U["🌐 End Users (Global)"] --> GLB["Global Load Balancer<br/>(geo-routing / latency-based)"]
+
+  GLB -->|"Asia Pacific"| AP["BABEH Instance<br/>🇸🇬 Singapore / 🇮🇩 Jakarta"]
+  GLB -->|"Europe"| EU["BABEH Instance<br/>🇩🇪 Frankfurt / 🇮🇪 Dublin"]
+  GLB -->|"Americas"| US["BABEH Instance<br/>🇺🇸 US-East / US-West"]
+
+  AP --> APD["Data Layer<br/>Vector DB · SQL DB · LLM"]
+  EU --> EUD["Data Layer<br/>Vector DB · SQL DB · LLM"]
+  US --> USD["Data Layer<br/>Vector DB · SQL DB · LLM"]
+
+  APD <-->|"Optional sync"| EUD
+  EUD <-->|"Optional sync"| USD
+
+  style U fill:#3B82F6,color:#fff
+  style GLB fill:#EC4899,color:#fff
+  style AP fill:#8B5CF6,color:#fff
+  style EU fill:#8B5CF6,color:#fff
+  style US fill:#8B5CF6,color:#fff
+  style APD fill:#F59E0B,color:#fff
+  style EUD fill:#F59E0B,color:#fff
+  style USD fill:#F59E0B,color:#fff
+</div>
+
+<h3 id="multi-region-benefits">Benefits of Multi-Region Deployment</h3>
+<table>
+  <thead><tr><th>Benefit</th><th>Description</th></tr></thead>
+  <tbody>
+    <tr>
+      <td><strong>Lower Latency</strong></td>
+      <td>Users are routed to the nearest region, reducing API round-trip time significantly — especially important for streaming LLM responses.</td>
+    </tr>
+    <tr>
+      <td><strong>High Availability</strong></td>
+      <td>If one region experiences an outage, traffic is automatically failed over to a healthy region with no manual intervention.</td>
+    </tr>
+    <tr>
+      <td><strong>Data Residency Compliance</strong></td>
+      <td>Store and process data within specific geographic boundaries to comply with regulations such as GDPR (EU), PDPA (Southeast Asia), or other local data sovereignty requirements.</td>
+    </tr>
+    <tr>
+      <td><strong>Horizontal Scalability</strong></td>
+      <td>Each region scales independently. A traffic spike in one market does not affect the performance experienced by users in other regions.</td>
+    </tr>
+    <tr>
+      <td><strong>Knowledge Base Sync</strong></td>
+      <td>Optionally synchronize the knowledge base, pricing, and product spec data across regions so all instances serve consistent, up-to-date information.</td>
+    </tr>
+  </tbody>
+</table>
+
+<div class="callout callout-info">
+  <div class="callout-title">Deployment Models</div>
+  <p>Multi-region instances can be configured as <strong>active-active</strong> (all regions serve traffic simultaneously) or <strong>active-passive</strong> (one primary region with standby failover). The right model depends on your traffic distribution and RTO/RPO requirements.</p>
+</div>
+
+<div id="page-nav-root"></div> </main> <aside class="doc-toc" id="toc-root"></aside> </div> <script src="../js/docs.js"></script>
+</body>
+</html>

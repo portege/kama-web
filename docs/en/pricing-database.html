@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head> <meta charset="UTF-8" /> <meta name="viewport" content="width=device-width, initial-scale=1.0" /> <title>Pricing Database — BABEH Docs</title> <link rel="stylesheet" href="../css/docs.css" />
+</head>
+<body> <button class="hamburger" id="hamburgerBtn">Menu</button> <div id="sidebar-root"></div> <div class="doc-layout"> <main class="doc-main"> <div id="breadcrumb-root"></div> <h1>Pricing Database</h1> <p class="subtitle"> Manage product pricing data with smart search, natural-language price detection, and dynamic schema support.
+ </p> <div class="callout callout-info"> <div class="callout-title">Who can access this?</div> <p> <span class="badge badge-role-editor">editor</span> <span class="badge badge-role-manager">manager</span> <span class="badge badge-role-superadmin">superadmin</span> </p> </div> <!-- ============================================ --> <h2 id="overview">Overview</h2> <p> The Pricing Database stores structured product pricing information. It supports <strong>full-text search</strong> via FTS5, <strong>semantic search</strong> via VectorDB, and <strong>smart price-range detection</strong> that understands natural language queries like "harga antara 200 juta sampai 300 juta".
+ </p> <h3 id="default-fields">Default Fields</h3> <table> <thead> <tr><th>Field</th><th>Type</th><th>Required</th><th>FTS Weight</th><th>Description</th></tr> </thead> <tbody> <tr> <td><code>product_name</code></td> <td>Text</td> <td><span class="badge badge-required">Required</span></td> <td><strong>2.0</strong> (highest)</td> <td>Product display name — primary search field</td> </tr> <tr> <td><code>sku</code></td> <td>Text</td> <td><span class="badge badge-optional">Optional</span></td> <td>1.0</td> <td>Stock keeping unit / product code</td> </tr> <tr> <td><code>price</code></td> <td>Real</td> <td><span class="badge badge-required">Required</span></td> <td>—</td> <td>Numeric price value (not FTS-indexed)</td> </tr> <tr> <td><code>currency</code></td> <td>Text</td> <td><span class="badge badge-optional">Optional</span></td> <td>0.5</td> <td>Currency code (default: <code>IDR</code>)</td> </tr> <tr> <td><code>unit</code></td> <td>Text</td> <td><span class="badge badge-optional">Optional</span></td> <td>0.5</td> <td>Pricing unit (default: <code>unit</code>)</td> </tr> <tr> <td><code>category</code></td> <td>Text</td> <td><span class="badge badge-optional">Optional</span></td> <td><strong>1.5</strong></td> <td>Product category for grouping and filtering</td> </tr> <tr> <td><code>description</code></td> <td>Text</td> <td><span class="badge badge-optional">Optional</span></td> <td>1.0</td> <td>Product description</td> </tr> <tr> <td><code>stock</code></td> <td>Text</td> <td><span class="badge badge-optional">Optional</span></td> <td>—</td> <td>Availability status — <code>Tersedia</code> (in stock) or <code>Habis</code> (out of stock). Shown as a badge in the UI but excluded from LLM context to keep responses concise.</td> </tr> </tbody> </table> <div class="callout callout-tip"> <div class="callout-title">Custom Fields</div> <p> <span class="badge badge-role-superadmin">superadmin</span> users can add custom fields via the
+ <a href="schema-editor.html">Schema Editor</a>. Each field's FTS weight and VectorDB template are configurable.
+ </p> </div> <div class="mermaid">
+erDiagram
+ PRICING {
+ int id PK "Auto-increment"
+ text product_name "Required, FTS weight 2.0"
+ text sku "Optional, FTS weight 1.0"
+ real price "Required, not FTS-indexed"
+ text currency "Default: IDR"
+ text unit "Default: unit"
+ text category "FTS weight 1.5"
+ text description "FTS weight 1.0"
+ int vectordb_synced "0 or 1"
+ text last_updated "Timestamp"
+ }
+ </div> <!-- ============================================ --> <h2 id="browse-search">Browse & Search</h2> <h3 id="table-view">Table View</h3> <p>The pricing page shows all records in a paginated, searchable table.</p> <div class="screenshot-wrapper"> <div class="screenshot-placeholder"> <div class="ph-icon"></div> <img src="../images/pricing-table-babeh.png" alt="Pricing table" /> <div class="ph-label">Screenshot: Pricing data table with search bar, category filter, and pagination</div> </div> </div> <h3 id="search-behavior">Search Behavior</h3> <p> The search box uses <strong>FTS5 full-text search</strong>. It searches across these fields
+ (with different weights):
+ </p> <div class="mermaid">
+flowchart LR
+ Q[ Search Query] --> FTS[FTS5 Engine]
+ FTS --> F1["product_name<br/> weight 2.0"]
+ FTS --> F2["category<br/> weight 1.5"]
+ FTS --> F3["sku<br/>weight 1.0"]
+ FTS --> F4["description<br/>weight 1.0"]
+
+ style Q fill:#3B82F6,color:#fff
+ style F1 fill:#22C55E,color:#fff
+ style F2 fill:#84CC16,color:#fff
+ </div> <p> Fields with higher FTS weights rank higher in search results. For example, searching "Honda Veloz"
+ will prioritize records where "Honda Veloz" appears in <code>product_name</code> (weight 2.0)
+ over those where it only appears in <code>description</code> (weight 1.0).
+ </p> <h3 id="filters">Filters & Controls</h3> <ul> <li><strong>Search</strong> — Full-text search across all FTS-indexed fields</li> <li><strong>Category filter</strong> — Dropdown populated from distinct categories in the database</li> <li><strong>Page size</strong> — 25, 50, 100, or 150 records per page</li> </ul> <!-- ============================================ --> <h2 id="smart-price">Smart Price-Range Detection</h2> <p> When users search via the query API (or the widget), BABEH automatically detects price-related
+ natural language and converts it into numeric filters. This works in <strong>Indonesian and English</strong>.
+ </p> <table> <thead> <tr><th>Pattern</th><th>Example</th><th>Interpretation</th></tr> </thead> <tbody> <tr> <td><strong>Explicit range</strong></td> <td>"antara 200 juta sampai 300 juta"</td> <td>200,000,000 ≤ price ≤ 300,000,000</td> </tr> <tr> <td><strong>Upper bound</strong></td> <td>"budget 500 juta" / "dibawah 1 miliar"</td> <td>price ≤ 500,000,000</td> </tr> <tr> <td><strong>Lower bound</strong></td> <td>"diatas 200 juta"</td> <td>price ≥ 200,000,000</td> </tr> <tr> <td><strong>Approximate</strong></td> <td>"sekitar 300 juta"</td> <td>240,000,000 ≤ price ≤ 360,000,000 (±20%)</td> </tr> </tbody> </table> <div class="callout callout-info"> <div class="callout-title">Unit Parsing</div> <p> Indonesian currency units are automatically converted:<br/> <code>miliar</code> = 1,000,000,000 &nbsp;|&nbsp;
+ <code>juta</code> = 1,000,000 &nbsp;|&nbsp;
+ <code>ribu</code> = 1,000
+ </p> </div> <!-- ============================================ --> <h2 id="crud">Add / Edit / Delete Records</h2> <h3 id="add-record">Adding a Record</h3> <ol class="steps"> <li>Click the <strong>"+ Add"</strong> button above the table.</li> <li>A modal appears with a <strong>dynamic form</strong> generated from the current schema.</li> <li>Fill in the required fields (marked with a red asterisk).</li> <li>Click <strong>Save</strong>. The record is validated against the schema before saving.</li> </ol> <div class="screenshot-wrapper"> <div class="screenshot-placeholder"> <div class="ph-icon"></div> <img src="../images/pricing-add-babeh.png" alt="Add pricing modal" /> <div class="ph-label">Screenshot: Add/Edit pricing record modal with dynamic form fields</div> </div> </div> <h3 id="edit-record">Editing a Record</h3> <p>Click the <strong> Edit</strong> button on any row to open the edit modal. The form is pre-populated with current values. Modify fields and click <strong>Save</strong>.</p> <h3 id="delete-record">Deleting a Record</h3> <p>Click the <strong> Delete</strong> button on a row. A confirmation dialog appears. Once confirmed, the record is permanently deleted.</p> <!-- ============================================ --> <h2 id="import-export">Import & Export</h2> <h3 id="import-csv">Import CSV</h3> <ol class="steps"> <li>Click <strong>"Import"</strong> → select <strong>CSV</strong> tab.</li> <li>Choose a CSV file. Column headers must match the schema field names (e.g., <code>product_name</code>, <code>price</code>, <code>category</code>).</li> <li>The system maps columns by name and validates each row against the schema.</li> <li>A summary shows how many records were imported successfully.</li> </ol> <h3 id="import-json">Import JSON</h3> <p>Accepts two formats:</p> <ul> <li><strong>Array format</strong>: <code>[{"product_name": "...", "price": 100}, ...]</code></li> <li><strong>Envelope format</strong>: <code>{"items": [...]}</code></li> </ul> <h3 id="export">Export</h3> <ul> <li><strong>Export JSON</strong> — Downloads a JSON file with a schema version metadata envelope</li> <li><strong>Export CSV</strong> — Downloads a CSV file with metadata comments at the top</li> </ul> <!-- ============================================ --> <h2 id="vectordb-sync">VectorDB Sync</h2> <p> Pricing records can be indexed in <strong>ChromaDB</strong> for semantic search, allowing the AI
+ to find relevant pricing when users ask natural-language questions.
+ </p> <ol class="steps"> <li>Click the <strong>"Sync VectorDB"</strong> button at the top of the pricing page.</li> <li>All records are processed: a text representation is generated from the VectorDB template in the schema, then embedded.</li> <li>The <code>vectordb_synced</code> flag is set to <code>1</code> for each synced record.</li> </ol> <div class="callout callout-warning"> <div class="callout-title">When to Sync</div> <p> You should sync VectorDB after:
+ </p> <ul> <li>Importing new records</li> <li>Making bulk edits</li> <li>Changing the VectorDB template in the Schema Editor</li> </ul> </div> <!-- ============================================ --> <h2 id="truncate">Truncate (Empty Database)</h2> <div class="callout callout-danger"> <div class="callout-title">Destructive Action</div> <p> The <strong>"Truncate"</strong> button deletes <strong>ALL</strong> pricing records permanently.
+ This action cannot be undone. Export your data first if you need a backup.
+ </p> </div> <p>Only use this when you want to start fresh — for example, before a complete data reimport.</p> <div id="page-nav-root"></div> </main> <aside class="doc-toc" id="toc-root"></aside> </div> <script src="../js/docs.js"></script>
+</body>
+</html>

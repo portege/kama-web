@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head> <meta charset="UTF-8" /> <meta name="viewport" content="width=device-width, initial-scale=1.0" /> <title>User Management — BABEH Docs</title> <link rel="stylesheet" href="../css/docs.css" />
+</head>
+<body> <button class="hamburger" id="hamburgerBtn">Menu</button> <div id="sidebar-root"></div> <div class="doc-layout"> <main class="doc-main"> <div id="breadcrumb-root"></div> <h1>User Management</h1> <p class="subtitle"> Create users, assign roles, manage access, and change passwords.
+ </p> <div class="callout callout-danger"> <div class="callout-title">Restricted Access</div> <p> User management (create, edit, delete users) is available only to
+ <span class="badge badge-role-superadmin">superadmin</span>.
+ All authenticated users can change their own password.
+ </p> </div> <!-- ============================================ --> <h2 id="users-table">Users Table</h2> <p>The Users page displays all registered users in a table:</p> <table> <thead> <tr><th>Column</th><th>Description</th></tr> </thead> <tbody> <tr><td><strong>ID</strong></td><td>Auto-increment user ID</td></tr> <tr><td><strong>Username</strong></td><td>Login username (unique). Your own row shows a "You" badge.</td></tr> <tr><td><strong>Role</strong></td><td>Color-coded role badge (superadmin / manager / analyst / editor)</td></tr> <tr><td><strong>Status</strong></td><td>Active (green) or Inactive (gray)</td></tr> <tr><td><strong>Created</strong></td><td>Account creation date</td></tr> <tr><td><strong>Actions</strong></td><td>Edit and Delete buttons</td></tr> </tbody> </table> <div class="screenshot-wrapper"> <img src="" alt="Users table" /> <div class="screenshot-placeholder"> <div class="ph-icon"></div> <div class="ph-label">Screenshot: Users table with role badges, status indicators, and action buttons</div> </div> </div> <!-- ============================================ --> <h2 id="create-user">Create a New User</h2> <ol class="steps"> <li>Click <strong>"+ Add User"</strong> above the table.</li> <li>Fill in the form:
+ <ul> <li><strong>Username</strong> — must be unique</li> <li><strong>Password</strong> — will be hashed with bcrypt (max 72 bytes)</li> <li><strong>Role</strong> — select from superadmin, manager, analyst, editor</li> <li><strong>Active</strong> — checkbox to enable/disable the account</li> </ul> </li> <li>Click <strong>Save</strong>.</li> </ol> <div class="screenshot-wrapper"> <img src="" alt="Add user modal" /> <div class="screenshot-placeholder"> <div class="ph-icon"></div> <div class="ph-label">Screenshot: Add/Edit user modal with username, password, role dropdown, and active checkbox</div> </div> </div> <div class="mermaid">
+flowchart LR
+ A[Superadmin] -->|Create User| B[Set Username + Password]
+ B --> C[Assign Role]
+ C --> D{Role}
+ D -->|superadmin| E[Full access]
+ D -->|manager| F[Content + Analytics]
+ D -->|analyst| G[Analytics + Settings]
+ D -->|editor| H[Content only]
+
+ style A fill:#dc2626,color:#fff
+ style E fill:#dc2626,color:#fff
+ style F fill:#d97706,color:#fff
+ style G fill:#2563eb,color:#fff
+ style H fill:#16a34a,color:#fff
+ </div> <!-- ============================================ --> <h2 id="edit-user">Edit a User</h2> <p>Click <strong> Edit</strong> on any user row to modify:</p> <ul> <li><strong>Username</strong> — can be changed</li> <li><strong>Password</strong> — leave blank to keep current password, or enter a new one</li> <li><strong>Role</strong> — change the user's access level</li> <li><strong>Active</strong> — deactivate the account without deleting it</li> </ul> <div class="callout callout-warning"> <div class="callout-title">Role Change Restrictions</div> <p>Only <span class="badge badge-role-superadmin">superadmin</span> users can change roles. Non-superadmin users editing their own profile cannot change their role.</p> </div> <!-- ============================================ --> <h2 id="delete-user">Delete a User</h2> <p>Click <strong> Delete</strong> to permanently remove a user account.</p> <div class="callout callout-danger"> <div class="callout-title">Restrictions</div> <ul> <li>You <strong>cannot delete your own account</strong> — the delete button is disabled on your own row.</li> <li>Deletion is <strong>permanent</strong> and cannot be undone.</li> </ul> </div> <!-- ============================================ --> <h2 id="change-password">Change My Password</h2> <p> All authenticated users can change their own password using the <strong>"Change My Password"</strong> card, which is always visible at the bottom of the Users page (or accessible from the profile).
+ </p> <ol class="steps"> <li>Enter your <strong>current password</strong>.</li> <li>Enter your <strong>new password</strong>.</li> <li>Click <strong>"Change Password"</strong>.</li> </ol> <div class="callout callout-info"> <div class="callout-title">Password Requirements</div> <p> Passwords are hashed with <strong>bcrypt</strong>, which imposes a maximum of <strong>72 bytes</strong>.
+ There is no minimum length enforced by default, but strong passwords are recommended.
+ </p> </div> <!-- ============================================ --> <h2 id="roles">Available Roles</h2> <p>See <a href="roles.html">Roles & Permissions</a> for a complete access matrix.</p> <table> <thead> <tr><th>Role</th><th>Description</th></tr> </thead> <tbody> <tr> <td><span class="badge badge-role-superadmin">superadmin</span></td> <td>Full system access — users, schemas, activity log, VectorDB viewer, plus all content and analytics</td> </tr> <tr> <td><span class="badge badge-role-manager">manager</span></td> <td>Content management (knowledge, pricing, specs) + all analytics + settings + debug</td> </tr> <tr> <td><span class="badge badge-role-analyst">analyst</span></td> <td>Analytics pages + settings + debug (no content editing)</td> </tr> <tr> <td><span class="badge badge-role-editor">editor</span></td> <td>Content management only (knowledge, pricing, specs)</td> </tr> </tbody> </table> <div id="page-nav-root"></div> </main> <aside class="doc-toc" id="toc-root"></aside> </div> <script src="../js/docs.js"></script>
+</body>
+</html>

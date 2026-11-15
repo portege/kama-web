@@ -1,0 +1,9 @@
+<!DOCTYPE html>
+<html lang="id">
+<head> <meta charset="UTF-8" /> <meta name="viewport" content="width=device-width, initial-scale=1.0" /> <title>Log Aktivitas — BABEH Docs</title> <link rel="stylesheet" href="../css/docs.css" />
+</head>
+<body> <button class="hamburger" id="hamburgerBtn">Menu</button> <div id="sidebar-root"></div> <div class="doc-layout"> <main class="doc-main"> <div id="breadcrumb-root"></div> <div class="callout callout-warning"> <div class="callout-title">Halaman ini sedang dalam proses penerjemahan</div> <p> Konten di bawah ini masih dalam Bahasa Inggris dan sedang diterjemahkan ke Bahasa Indonesia.
+ <a href="../en/activity-log.html">Read in English →</a> </p> </div> <h1>Log Aktivitas</h1> <p class="subtitle"> Jejak audit otomatis — catat semua operasi POST/PUT/DELETE yang dilakukan pengguna admin.
+ </p> <div class="callout callout-danger"> <div class="callout-title">Akses Terbatas</div> <p>Hanya <span class="badge badge-role-superadmin">superadmin</span> yang dapat melihat log aktivitas.</p> </div> <h2 id="what-logged">Apa yang Dicatat</h2> <p>14 field: timestamp, username, role, method, endpoint, status code, IP, user-agent, OS, browser, payload (disanitasi), dll.</p> <h2 id="security">Keamanan</h2> <p>Payload login diredaksi otomatis. Data sensitif disanitasi sebelum disimpan.</p> <h2 id="filtering">Filter &amp; Pencarian</h2> <p>Filter berdasarkan teks, metode HTTP, rentang tanggal, dan urutkan berdasarkan kolom.</p> <h2 id="retention">Retensi Data</h2> <div class="callout callout-warning"> <div class="callout-title">Retensi 120 Hari</div> <p>Log otomatis dihapus setelah 120 hari. Ekspor ke CSV untuk penyimpanan jangka panjang.</p> </div> <h2 id="export">Ekspor CSV</h2> <p>Download semua log yang terfilter sebagai file CSV.</p> <div id="page-nav-root"></div> </main> <aside class="doc-toc" id="toc-root"></aside> </div> <script src="../js/docs.js"></script>
+</body>
+</html>

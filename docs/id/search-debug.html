@@ -1,0 +1,9 @@
+<!DOCTYPE html>
+<html lang="id">
+<head> <meta charset="UTF-8" /> <meta name="viewport" content="width=device-width, initial-scale=1.0" /> <title>Debug Pencarian — BABEH Docs</title> <link rel="stylesheet" href="../css/docs.css" />
+</head>
+<body> <button class="hamburger" id="hamburgerBtn">Menu</button> <div id="sidebar-root"></div> <div class="doc-layout"> <main class="doc-main"> <div id="breadcrumb-root"></div> <div class="callout callout-warning"> <div class="callout-title">Halaman ini sedang dalam proses penerjemahan</div> <p> Konten di bawah ini masih dalam Bahasa Inggris dan sedang diterjemahkan ke Bahasa Indonesia.
+ <a href="../en/search-debug.html">Read in English →</a> </p> </div> <h1>Debug Pencarian</h1> <p class="subtitle"> Alat diagnostik untuk menganalisis pipeline pencarian — lihat skor mentah, hasil per-tahap, dan metadata.
+ </p> <h2 id="controls">Kontrol Debug</h2> <p>Masukkan query, atur top-K dan threshold, lalu jalankan pencarian debug.</p> <h2 id="sections">10 Bagian Debug</h2> <p>Lihat detail dari setiap tahap pipeline: query processing, intent router, vector results, BM25 results, fused results, dsb.</p> <h2 id="scores">Visualisasi Skor</h2> <table> <thead><tr><th>Rentang Skor</th><th>Warna</th></tr></thead> <tbody> <tr><td>≥ 0.7</td><td> Hijau — Sangat relevan</td></tr> <tr><td>0.4 – 0.69</td><td> Kuning — Cukup relevan</td></tr> <tr><td>&lt; 0.4</td><td> Merah — Kurang relevan</td></tr> </tbody> </table> <h2 id="tips">Tips Troubleshooting</h2> <p>Gunakan debug search untuk mendiagnosis mengapa pencarian tidak menghasilkan hasil yang diharapkan.</p> <div id="page-nav-root"></div> </main> <aside class="doc-toc" id="toc-root"></aside> </div> <script src="../js/docs.js"></script>
+</body>
+</html>
